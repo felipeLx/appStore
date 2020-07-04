@@ -5,9 +5,8 @@ import api from '../../api/index';
 import Aux from '../../hoc/Aux';
 // import Product from '../../components/Product/Product';
 
-const ProductsBuilder = (props) => {
+const ProductsBuilder = () => {
 
-    const [id, setId] = useState(1);
     const [productsList, setProductsList] = useState([]);
     const [orderQuantity, setOrderQuantity] = useState(0);
     const [userId, setUserId] = useState('');
@@ -20,18 +19,18 @@ const ProductsBuilder = (props) => {
             })
             .catch(err => console.log(err));
     }, []);
-
-    // const openProductHandler = async(event) => {
-    //     event.preventDefault();
-    //     setId(event.target.id);
-    //     await api.getOneProduct(event.target.id)
-    //             .then(res => {
-    //                 return (
-    //                     window.location.href = `${res.config.url}`
-    //                 )
-    //             })
-    //             .catch(err => console.log(err));
-    // };
+    
+    const openProductHandler = async(event) => {
+        event.preventDefault();
+        setUserId(event.target.id);
+        await api.getOneProduct(event.target.id)
+                .then(res => {
+                    return (
+                        window.location.href = `${res.config.url}`
+                    )
+                })
+                .catch(err => console.log(err));
+    };
 
     const addHandler = () => {
         let quantity = orderQuantity + 1;
@@ -69,7 +68,7 @@ const ProductsBuilder = (props) => {
                     <Card.Img className="card-img-top" variant="top" src={product.picture} />
                     <Card.Body className="card-body">
                         <Card.Title>Produto: {product.product}</Card.Title>
-                        {/* <Button id={product._id} onClick={(event) => openProductHandler(event)} variant="primary">Ver Detalhe</Button> */}
+                        <Button id={product._id} onClick={(event) => openProductHandler(event)} variant="primary">Ver Detalhe</Button>
                         <hr />
                         <Card.Text>
                         Categoria: {product.category}
@@ -81,8 +80,8 @@ const ProductsBuilder = (props) => {
                         Quantidade: {orderQuantity}
                         </Card.Text>
                         <Card.Text>
-                        <Button onClick={lessHandler} className="btn btn-danger">-</Button>
-                        <Button onClick={addHandler} className="btn btn-primary">+</Button>
+                            <Button onClick={() => lessHandler()} className="btn btn-danger">-</Button>
+                            <Button onClick={() => addHandler()} className="btn btn-primary">+</Button>
                         </Card.Text>
                         <Card.Text>
                         <Button onClick={(event) => closeOrderHandler(event)} className="btn btn-info">Adicionar ao pedido</Button>

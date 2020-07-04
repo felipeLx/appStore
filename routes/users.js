@@ -8,7 +8,7 @@ const User = require('../models/user.model');
 const { forwardAuthenticated } = require('../config/auth');
 
 router.route('/login', forwardAuthenticated).get((req, res) => res.redirect('/login'));
-router.route('/register', forwardAuthenticated).get((req, res) => res.redirect('/register'));
+router.route('/auth', forwardAuthenticated).get((req, res) => res.redirect('/auth'));
 
 router.route('/').get(async(req,res) => {
     
@@ -23,17 +23,15 @@ router.route('/').get(async(req,res) => {
     })
 });
 // Login
-router.route('/login').post(async(req,res, next) => {
+router.route('/login').post(async(req,res) => {
     
     if(!req.body) {
         res.status('400').send('Preencher os campos obriatórios antes de enviar!');
         return;
     }
-    await passport.authenticate('local', {
-            successRedirect: '/',
-            failureRedirect: '/user/login',
-            failureFlash: true,
-        })(req, res, next);
+    await passport.authenticate('local')(req, res,() => {
+        res.redirect('/api');
+    }) 
 });
 
 // Logout
@@ -44,7 +42,7 @@ router.route('/logout').post(async(req,res) => {
 })
 
 // Register
-router.route('/register').post(async(req, res, next) => {
+router.route('/auth').post(async(req, res) => {
     if(!req.body) {
         return res.status(500).send('Informar todos os campos antes de enviar');
     }
@@ -67,7 +65,7 @@ router.route('/register').post(async(req, res, next) => {
       if (errors.length > 0) {
         res.send('Error to access');
       } else {
-        User.findOne({ email: email }).then(user => {
+        User.findOne({ email: email, username: username }).then(user => {
           if (user) {
             errors.push({ msg: 'Email already exists' });
             res.status(400).send('Email already exists');
@@ -80,16 +78,12 @@ router.route('/register').post(async(req, res, next) => {
     
             bcrypt.genSalt(10, (err, salt) => {
               bcrypt.hash(newUser.password, salt, (err, hash) => {
-                if (err) throw err;
+                if (err) {throw err;}
                 newUser.password = hash;
                 newUser
                   .save()
                   .then(user => {
-                    req.flash(
-                      'success_msg',
-                      'You are now registered and can log in'
-                    );
-                    res.status(200).send(user);
+                    res.redirect('/api');
                   })
                   .catch(err => console.log(err));
               });
@@ -123,7 +117,7 @@ router.route('/:id').post(async(req,res, next) => {
         return res.status(500).send('Id não informado');
     }
     
-    await User.findById(userId, (err, user) => {
+    await User.findById(req.params.id, (err, user) => {
         if(err) {
             next(err);
         } else if(!user) {

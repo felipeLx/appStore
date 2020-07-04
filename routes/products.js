@@ -1,7 +1,5 @@
 const express = require('express');
-const ObjectID = require("mongodb").ObjectId;
 const router = express.Router();
-const fs = require('fs');
 
 const Product = require('../models/product.model');
 
@@ -18,8 +16,6 @@ router.route('/').get(async(req,res) => {
     })
 });
 
-let productId = '';
-
 router.route('/').post(async(req,res) => {
     
     if(!req.body) {
@@ -31,8 +27,8 @@ router.route('/').post(async(req,res) => {
     let product = new Product(req.body);    
             await product.save()
                     .then(prod => {
-                        productId = prod._id;
-                        res.status(200).json({product: `${prod.product} adicionado com sucesso!`})
+                        res.status(200).send(prod);
+                        window.alert('Product save successfully!');
                     })
                     .catch((err) => {
                         console.log(err);
@@ -79,7 +75,7 @@ router.route('/:id').put(async(req,res, next) => {
     }})   
 });
 
-rrouter.route('/:id').delete(async(req,res) => {
+router.route('/:id').delete(async(req,res) => {
     if(!req.body) {
         return res.status(500).send('Not data informed!')
     }

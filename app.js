@@ -42,6 +42,8 @@ if(process.env.NODE_ENV === 'production') {
     })
   );
 
+  
+  
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
