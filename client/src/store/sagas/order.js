@@ -1,17 +1,17 @@
 import { put } from 'redux-saga/effects';
-import axios from '../../axios-orders';
+import axios from 'axios';
 
 import * as actions from '../actions/index';
 
-export function* purchaseBurgerSaga(action) {
+export function* purchaseProductSaga(action) {
     
-    yield put( actions.purchaseBurgerStart() );
+    yield put( actions.purchaseProductStart() );
     try{
         const response = yield axios.post( '/orders.json?auth=' + action.token, action.orderData )
         //console.log( response.data );
-        yield put( actions.purchaseBurgerSuccess( response.data.name, action.orderData ) );
+        yield put( actions.purchaseProductSuccess( response.data.name, action.orderData ) );
         } catch(error)  {
-                yield put( actions.purchaseBurgerFail( error ) );
+                yield put( actions.purchaseProductFail( error ) );
         } 
 }
 

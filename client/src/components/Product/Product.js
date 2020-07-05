@@ -1,9 +1,12 @@
 // product that will be render in the scream
 import React, { useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Card, Button } from 'react-bootstrap';
 
 import api from '../../api/index';
-import Aux from '../../hoc/Aux';
+import Aux from '../../hoc/Aux/Aux';
+import classes from './Product.module.css';
+
 
 const product = React.memo(props => {
     const [product, setProduct] = useState('');
@@ -43,6 +46,13 @@ const product = React.memo(props => {
         .catch(err => console.log(err))
     };
 
+    const createHandler = async() => {
+
+        // await api.insertProduct(product)
+        // .then(prod => <Redirect to={`/api/${prod._id}`} />)
+        // .catch(err => console.log(err))
+    };
+
     const productHandler = () => {
         return(
         <div className="col">
@@ -63,8 +73,9 @@ const product = React.memo(props => {
                     <Card.Link href="#">Comprar</Card.Link>
                 </Card.Body>
             </Card>
-            <Button onClick={() => editHandler()} className="btn btn-info">EDIT</Button>
-            <Button onClick={() => deleteHandler()} className="btn btn-danger">DELETE</Button>
+            <Button onClick={() => editHandler()} className="btn btn-info ">EDIT</Button>
+            <Button onClick={() => deleteHandler()} className="btn btn-danger btn-space">DELETE</Button>
+            <Button onClick={() => createHandler()} className="btn btn-success">CREATE</Button>
         </div>
         );
     };
@@ -72,10 +83,9 @@ const product = React.memo(props => {
     return (
         <Aux>
         <hr />
-        <div className="container cards">
+        <div className="container">
             <div className="row">
-                {productHandler()}
-                
+                {productHandler}
             </div>
         </div>
         </Aux>

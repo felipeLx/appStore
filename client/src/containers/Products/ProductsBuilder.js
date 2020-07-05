@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {Card, Button} from 'react-bootstrap';
 import api from '../../api/index';
 
-import Aux from '../../hoc/Aux';
+import Aux from '../../hoc/Aux/Aux';
 // import Product from '../../components/Product/Product';
 
 const ProductsBuilder = () => {

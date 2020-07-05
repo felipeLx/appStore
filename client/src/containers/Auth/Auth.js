@@ -1,34 +1,141 @@
 import React, { useState, useEffect } from 'react';
-import { Link, withRouter, useHistory } from "react-router-dom";
+import { Link, withRouter, Redirect } from "react-router-dom";
+import { connect } from 'react-redux';
 
+import Input from '../../components/UI/Input/Input';
+import Button from '../../components/UI/Button/Button';
+import Spinner from '../../components/UI/Spinner/Spinner';
 import api from '../../api/index';
-import Aux from '../../hoc/Aux';
+import * as actions from '../../store/actions/index';
+import { updateObject, checkValidity } from '../../shared/utility';
 
-const auth = React.memo(() => {
-  const history = useHistory();
-    const [user, setUser] = useState({
-            username: '',
-            password: '',
-            password2: '',
-            errors: {}
-    });
 
-    const [authenticated, setAuthenticated] = useState(false);
 
-    const inputChangedHandler = (event) => {
-        setUser({ [event.target.id]: event.target.value});
-    };
+const auth = React.memo(props => {
+  const [controls, setControls] = useState({
+      username: {
+        elementType: 'input',
+        elementConfig: {
+            type: 'text',
+            placeholder: 'Username'
+        },
+        value: '',
+        validation: {
+            required: true
+        },
+        valid: false,
+        touched: false
+      },
+      email: {
+          elementType: 'input',
+          elementConfig: {
+              type: 'email',
+              placeholder: 'E-mail'
+          },
+          value: '',
+          validation: {
+              required: true,
+              isEmail: true
+          },
+          valid: false,
+          touched: false
+      },
+      password: {
+          elementType: 'input',
+          elementConfig: {
+              type: 'password',
+              placeholder: 'Password'
+          },
+          value: '',
+          validation: {
+              required: true,
+              minLength: 6
+          },
+          valid: false,
+          touched: false
+      },
+      password2: {
+        elementType: 'input',
+        elementConfig: {
+            type: 'password',
+            placeholder: 'Repetir Password'
+        },
+        value: '',
+        validation: {
+            required: true,
+            minLength: 6
+        },
+        valid: false,
+        touched: false
+      }
+  });
 
-    const submitHandler = async(event) => {
-        event.preventDefault();
-        setAuthenticated(true);
-        await api.registerUser(user)
-                .then(res => {
-                  console.log(res);
-                  return (window.location.href = history.push('/'))
-                })
-                .catch(err => console.log(err));
-    };
+  const [isSignup, setIsSignup] = useState(true);
+
+  const { buildingProduct, authRedirectPath ,onSetAuthRedirectPath } = props;
+
+  useEffect(() => {
+  if ( !buildingProduct && authRedirectPath !== '/' ) {
+      onSetAuthRedirectPath();
+  }
+  }, [buildingProduct, authRedirectPath ,onSetAuthRedirectPath]);
+
+  const inputChangedHandler = ( event, controlName ) => {
+  const updatedControls = updateObject( controls, {
+      [controlName]: updateObject( controls[controlName], {
+          value: event.target.value,
+          valid: checkValidity( event.target.value, controls[controlName].validation ),
+          touched: true
+      } )
+  } );
+  setControls(updatedControls);
+  }
+
+  const submitHandler = ( event ) => {
+  event.preventDefault();
+  props.onAuth( controls.username.value, controls.email.value, controls.password.value, controls.password2.value, isSignup );
+  }
+
+  const switchAuthModeHandler = () => {
+    setIsSignup(!isSignup);
+  };
+
+  const formElementsArray = [];
+  for ( let key in controls ) {
+      formElementsArray.push( {
+          id: key,
+          config: controls[key]
+      } );
+  };
+
+  let form = formElementsArray.map( formElement => (
+      <Input
+          key={formElement.id}
+          elementType={formElement.config.elementType}
+          elementConfig={formElement.config.elementConfig}
+          value={formElement.config.value}
+          invalid={!formElement.config.valid}
+          shouldValidate={formElement.config.validation}
+          touched={formElement.config.touched}
+          changed={( event ) => inputChangedHandler( event, formElement.id )} />
+  ));
+
+  if ( props.loading ) {
+      form = <Spinner />
+  }
+
+  let errorMessage = null;
+
+  if ( props.error ) {
+      errorMessage = (
+          <p>{props.error.message}</p>
+      );
+  }
+
+  let authRedirect = null;
+  if ( props.isAuthenticated ) {
+      authRedirect = <Redirect to={props.authRedirectPath} />
+  }
 
     return (
       <div className="container">
@@ -40,30 +147,30 @@ const auth = React.memo(() => {
             </Link>
             <div className="col s12" style={{ paddingLeft: "11.250px" }}>
               <h4>
-                <b>Registrar</b> below
+                <b>Registrar</b>
               </h4>
               <p className="grey-text text-darken-1">
                 Já tem uma conta? <Link to="/user/login">Login</Link>
               </p>
             </div>
-            <form>
-              <div className="input-field col s12">
+            <form onSubmit={submitHandler}>
+            <div className="input-field col s12">
                 <input
-                  onChange={inputChangedHandler}
-                  // value={user.username}
-                  error={user.errors}
+                  // onChange={inputChangedHandler}
+                  // value={user.email}
+                  // error={user.errors}
                   id="username"
                   type="text"
                   
                 />
-                <label htmlFor="username">Nome de usuário</label>
+                <label htmlFor="username">Username</label>
                 
               </div>
               <div className="input-field col s12">
                 <input
-                  onChange={inputChangedHandler}
+                  // onChange={inputChangedHandler}
                   // value={user.email}
-                  error={user.errors}
+                  // error={user.errors}
                   id="email"
                   type="email"
                   
@@ -73,26 +180,29 @@ const auth = React.memo(() => {
               </div>
               <div className="input-field col s12">
                 <input
-                  onChange={inputChangedHandler}
+                  // onChange={inputChangedHandler}
                   // value={user.password}
-                  error={user.errors}
+                  // error={user.errors}
                   id="password"
                   type="password"
                  
                 />
                 <label htmlFor="password">Password</label>
+                
+              </div>
               <div className="input-field col s12">
                 <input
-                  onChange={inputChangedHandler}
-                  // value={user.password2}
-                  error={user.errors}
+                  // onChange={inputChangedHandler}
+                  // value={user.password}
+                  // error={user.errors}
                   id="password2"
                   type="password"
                  
-              />
+                />
                 <label htmlFor="password2">Repetir Password</label>
                 
               </div>
+              </form>
               <div className="col s12" style={{ paddingLeft: "11.250px" }}>
                 <button
                   style={{
@@ -103,17 +213,39 @@ const auth = React.memo(() => {
                   }}
                   type="submit"
                   className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-                  onClick= {(event) => submitHandler(event)}
-                >   
+                  
+                >
                   Registrar
                 </button>
               </div>
-              </div>
-            </form>
+            
           </div>
         </div>
+        {authRedirect}
+        {errorMessage}
+            <form onSubmit={submitHandler}>
+              {form}
+              <Button btnType="Success">SUBMIT</Button>
+            </form>
       </div>
     );
 });
 
-export default auth;
+const mapStateToProps = state => {
+  return {
+      loading: state.auth.loading,
+      error: state.auth.error,
+      isAuthenticated: state.auth.token !== null,
+      buildingProduct: state.productBuilder.building,
+      authRedirectPath: state.auth.authRedirectPath
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+      onAuth: ( username, email, password, password2, isSignup ) => dispatch( actions.auth( username, email, password, password2, isSignup ) ),
+      onSetAuthRedirectPath: () => dispatch( actions.setAuthRedirectPath( '/' ) )
+  };
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( auth );

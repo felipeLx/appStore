@@ -30,6 +30,14 @@ export const logout = () => {
     };
 }
 
+
+export const getUser = (userId) => {
+    return {
+        type: actionTypes.GET_SUCCESS,
+        userId: userId
+    };
+};
+
 export const logoutSucceed = () => {
     return {type: actionTypes.AUTH_LOGOUT};
 };
@@ -46,11 +54,13 @@ export const checkAuthTimeout = (expirationTime) => {
     }
 };
 
-export const auth = (email, password, isSignUp) => {
+export const auth = (username, email, password, password2, isSignUp) => {
     return {
         type: actionTypes.AUTH_USER,
+        username: username,
         email: email,
         password: password,
+        password2: password2,
         isSignUp: isSignUp
     };
 };

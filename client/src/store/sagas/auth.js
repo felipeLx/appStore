@@ -4,6 +4,10 @@ import axios from 'axios';
 
 import * as actions from '../actions/index';
 
+const api = axios.create({
+    baseURL: '/',
+});
+
 export function* logoutSaga(action) {
     yield call([localStorage, 'removeItem'], "token");
     yield call([localStorage, 'removeItem'], "expirationDate");
@@ -19,18 +23,18 @@ export function* checkAuthTimeoutSaga (action){
 export function* authUserSaga(action) {
     yield put(actions.authStart());
         const authData = {
+            username: action.username,
             email: action.email,
             password: action.password,
+            password2: action.password2,
             returnSecureToken: true
         };
-        let url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyACmBSN1k_Uhyn_789r5gmM0xd0dL2VdGE';
+        let url = '/user/auth';
         if(!action.isSignUp) {
-            url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyACmBSN1k_Uhyn_789r5gmM0xd0dL2VdGE';
+            url = '/user/login';
         }
         try{
-        const response = yield axios.post(url, authData)
-            
-        // console.log(response);
+        const response = yield api.post(url, authData);
         const expirationDate = yield new Date(new Date().getTime() + response.data.expiresIn * 1000);
         yield localStorage.setItem('token', response.data.idToken);
         yield localStorage.setItem('expirationDate', expirationDate);
@@ -59,3 +63,16 @@ export function* authCheckStateSaga(action) {
         }
 }
 
+export function* getUserSaga(action) {
+    yield put(actions.getUser());
+        const authData = {
+            id: action.id
+        };
+        let url = '/user/:id';
+
+        try{
+        const response = yield api.get(url, authData);
+        } catch(error) {
+                console.log(error);
+            }        
+}
