@@ -6,11 +6,11 @@ export const authStart = () => {
     };
 };
 
-export const authSuccess = (token, userId) => {
+export const authSuccess = (token, username) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
         idToken: token,
-        userId: userId
+        username: username
     };
 };
 
@@ -24,17 +24,17 @@ export const authFail = (error) => {
 export const logout = () => {
     // localStorage.removeItem('token');
     // localStorage.removeItem('expirationDate');
-    // localStorage.removeItem('userId');
+    // localStorage.removeItem('username');
     return {
         type: actionTypes.AUTH_INITIATE_LOGOUT
     };
 }
 
 
-export const getUser = (userId) => {
+export const getUser = (username) => {
     return {
         type: actionTypes.GET_SUCCESS,
-        userId: userId
+        username: username
     };
 };
 
@@ -65,6 +65,15 @@ export const auth = (username, email, password, password2, isSignUp) => {
     };
 };
 
+export const login = (email, password, isSignUp) => {
+    return {
+        type: actionTypes.LOGIN_USER,
+        email: email,
+        password: password,
+        isSignUp: isSignUp
+    };
+};
+
 export const setAuthRedirectPath = (path) => {
     return {
         type: actionTypes.SET_AUTH_REDIRECT_PATH,
@@ -75,5 +84,13 @@ export const setAuthRedirectPath = (path) => {
 export const authCheckState = () => {
     return {
         type: actionTypes.AUTH_CHECK_STATE
+    };
+};
+
+export const adminCheckState = (username, isSignUp) => {
+    return {
+        type: actionTypes.ADMIN_CHECK_STATE,
+        username: username,
+        isSignUp: isSignUp
     };
 };

@@ -13,6 +13,7 @@ const flash = require('connect-flash');
 const indexRoute = require('./routes/index');
 const productsRoute = require('./routes/products');
 const ordersRoute = require('./routes/orders');
+const dashboardRoute = require('./routes/dashboard');
 const usersRoute = require('./routes/users');
 
 // Passport config
@@ -63,6 +64,7 @@ app.use(function(req, res, next) {
 app.use('/api/', productsRoute);
 app.use('/user/', usersRoute);
 app.use('/order/', ordersRoute);
+app.use('/dashboard/', dashboardRoute);
 app.use('/', indexRoute);
 
 //Get the default connection

@@ -5,7 +5,9 @@ import { Card, Button } from 'react-bootstrap';
 
 import api from '../../api/index';
 import Aux from '../../hoc/Aux/Aux';
+import ProductHandle from './ProductHandle/ProductHandle';
 import classes from './Product.module.css';
+
 
 
 const product = React.memo(props => {
@@ -15,7 +17,6 @@ const product = React.memo(props => {
     useEffect(() => {
         api.getOneProduct(props.match.params.id)
                 .then(product => {
-                    console.log(product.data);
                     setProduct(product.data);
                 })
                 .catch(err => console.log(err));
@@ -32,25 +33,6 @@ const product = React.memo(props => {
             quantity = 0;
         }
         setOrderQuantity(quantity);
-    };
-
-    const editHandler = async() => {
-        await api.updateProductById(product._id)
-            .then(prod => console.log(prod))
-            .catch(err => console.log(err))
-    };
-
-    const deleteHandler = async() => {
-        await api.deleteProductById(product._id)
-        .then(prod => console.log('deleted'))
-        .catch(err => console.log(err))
-    };
-
-    const createHandler = async() => {
-
-        // await api.insertProduct(product)
-        // .then(prod => <Redirect to={`/api/${prod._id}`} />)
-        // .catch(err => console.log(err))
     };
 
     const productHandler = () => {
@@ -73,9 +55,6 @@ const product = React.memo(props => {
                     <Card.Link href="#">Comprar</Card.Link>
                 </Card.Body>
             </Card>
-            <Button onClick={() => editHandler()} className="btn btn-info ">EDIT</Button>
-            <Button onClick={() => deleteHandler()} className="btn btn-danger btn-space">DELETE</Button>
-            <Button onClick={() => createHandler()} className="btn btn-success">CREATE</Button>
         </div>
         );
     };
@@ -83,9 +62,9 @@ const product = React.memo(props => {
     return (
         <Aux>
         <hr />
-        <div className="container">
+        <div className={classes.Product}>
             <div className="row">
-                {productHandler}
+                {productHandler()}
             </div>
         </div>
         </Aux>

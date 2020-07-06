@@ -18,6 +18,7 @@ export {
 } from './order';
 export {
     auth,
+    login,
     logout,
     setAuthRedirectPath,
     authCheckState,
@@ -26,5 +27,6 @@ export {
     authSuccess,
     authFail,
     checkAuthTimeout,
-    getUser
+    getUser,
+    adminCheckState
 } from './auth';

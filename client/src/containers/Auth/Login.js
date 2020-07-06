@@ -65,12 +65,8 @@ const login = React.memo(props => {
 
   const submitHandler = ( event ) => {
   event.preventDefault();
-  props.onAuth( controls.email.value, controls.password.value, isSignup );
+  props.onLogin( controls.email.value, controls.password.value, isSignup );
   };
-
-  // const switchAuthModeHandler = () => {
-  //   setIsSignup(!isSignup);
-  // };
 
   const formElementsArray = [];
   for ( let key in controls ) {
@@ -115,8 +111,7 @@ const login = React.memo(props => {
         <div style={{ marginTop: "4rem", paddingTop: "70px" }} className="row">
           <div className="col s8 offset-s2">
             <Link to="/" className="btn-flat waves-effect">
-              <i className="material-icons left"> </i> Back to
-              home
+              <i className="material-icons left"> </i> Home
             </Link>
             <div className="col s12" style={{ paddingLeft: "11.250px" }}>
               <h4>
@@ -130,7 +125,7 @@ const login = React.memo(props => {
             {errorMessage}
             <form onSubmit={submitHandler}>
               {form}
-              <Button btnType="Success">SUBMIT</Button>
+              <Button btnType="Success">ENVIAR</Button>
             </form>
           </div>
         </div>
@@ -150,7 +145,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-      onAuth: ( email, password, isSignup ) => dispatch( actions.auth( email, password, isSignup ) ),
+      onLogin: ( email, password, isSignup ) => dispatch( actions.login( email, password, isSignup ) ),
       onSetAuthRedirectPath: () => dispatch( actions.setAuthRedirectPath( '/' ) )
   };
 };

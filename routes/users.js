@@ -22,22 +22,36 @@ router.route('/').get(async(req,res) => {
         }
     })
 });
+
 // Login
 router.route('/login').post(async(req,res) => {
-    
     if(!req.body) {
         res.status('400').send('Preencher os campos obriatórios antes de enviar!');
         return;
     }
-    await passport.authenticate('local')(req, res,() => {
-        res.redirect('/api');
-    }) 
+
+    const {email, password} = req.body;
+    
+    await User.findOne({email: email})
+        .then((user) => {
+                passport.authenticate('local')(req, res,() => {
+                    if(user.username !== 'admin') {
+                        res.status(200).send(user);
+                    } else {
+                        res.redirect('/dasboard');
+                    }
+                });
+            })
+        .catch(err => {
+            console.log(err);
+            res.redirect('/user/login');
+        });
+    
 });
 
 // Logout
 router.route('/logout').post(async(req,res) => {
     req.logout();
-    req.flash('success_msg', 'You are logged out');
     res.status(200).redirect('/user/login');
 })
 
@@ -83,6 +97,7 @@ router.route('/auth').post(async(req, res) => {
                 newUser
                   .save()
                   .then(user => {
+                    res.status(200).send(user);
                     res.redirect('/api');
                   })
                   .catch(err => console.log(err));
@@ -95,7 +110,8 @@ router.route('/auth').post(async(req, res) => {
     
 
 router.route('/:id').get(async(req,res, next) => {
-
+    console.log(req.params);
+    
     if(!req.params.id) {
         res.status(500).send('Id do usuário não informado');
     }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, withRouter, Redirect } from "react-router-dom";
 import { connect } from 'react-redux';
+import { Alert } from 'react-bootstrap';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
@@ -8,8 +9,6 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 import api from '../../api/index';
 import * as actions from '../../store/actions/index';
 import { updateObject, checkValidity } from '../../shared/utility';
-
-
 
 const auth = React.memo(props => {
   const [controls, setControls] = useState({
@@ -86,18 +85,16 @@ const auth = React.memo(props => {
           value: event.target.value,
           valid: checkValidity( event.target.value, controls[controlName].validation ),
           touched: true
-      } )
-  } );
-  setControls(updatedControls);
-  }
+          })
+      });
+      if(controls.username.value === 'admin') {
+        window.alert('Username not allowed');
+      } else {setControls(updatedControls);}
+  };
 
   const submitHandler = ( event ) => {
-  event.preventDefault();
-  props.onAuth( controls.username.value, controls.email.value, controls.password.value, controls.password2.value, isSignup );
-  }
-
-  const switchAuthModeHandler = () => {
-    setIsSignup(!isSignup);
+    event.preventDefault();
+    props.onAuth( controls.username.value, controls.email.value, controls.password.value, controls.password2.value, isSignup );
   };
 
   const formElementsArray = [];
@@ -142,8 +139,7 @@ const auth = React.memo(props => {
         <div style={{ marginTop: "4rem", paddingTop: "70px" }} className="row">
           <div className="col s8 offset-s2">
             <Link to="/" className="btn-flat waves-effect">
-              <i className="material-icons left"> </i> Back to
-              home
+              <i className="material-icons left"> </i> Home
             </Link>
             <div className="col s12" style={{ paddingLeft: "11.250px" }}>
               <h4>
@@ -153,81 +149,15 @@ const auth = React.memo(props => {
                 Já tem uma conta? <Link to="/user/login">Login</Link>
               </p>
             </div>
-            <form onSubmit={submitHandler}>
-            <div className="input-field col s12">
-                <input
-                  // onChange={inputChangedHandler}
-                  // value={user.email}
-                  // error={user.errors}
-                  id="username"
-                  type="text"
-                  
-                />
-                <label htmlFor="username">Username</label>
-                
-              </div>
-              <div className="input-field col s12">
-                <input
-                  // onChange={inputChangedHandler}
-                  // value={user.email}
-                  // error={user.errors}
-                  id="email"
-                  type="email"
-                  
-                />
-                <label htmlFor="email">Email</label>
-                
-              </div>
-              <div className="input-field col s12">
-                <input
-                  // onChange={inputChangedHandler}
-                  // value={user.password}
-                  // error={user.errors}
-                  id="password"
-                  type="password"
-                 
-                />
-                <label htmlFor="password">Password</label>
-                
-              </div>
-              <div className="input-field col s12">
-                <input
-                  // onChange={inputChangedHandler}
-                  // value={user.password}
-                  // error={user.errors}
-                  id="password2"
-                  type="password"
-                 
-                />
-                <label htmlFor="password2">Repetir Password</label>
-                
-              </div>
-              </form>
-              <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-                <button
-                  style={{
-                    width: "150px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "1rem"
-                  }}
-                  type="submit"
-                  className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-                  
-                >
-                  Registrar
-                </button>
-              </div>
-            
+            {authRedirect}
+            {errorMessage}
+                <form onSubmit={submitHandler}>
+                  {form}
+                  <Button btnType="Success">ENVIAR</Button>
+                </form>
           </div>
         </div>
-        {authRedirect}
-        {errorMessage}
-            <form onSubmit={submitHandler}>
-              {form}
-              <Button btnType="Success">SUBMIT</Button>
-            </form>
-      </div>
+      </div>  
     );
 });
 

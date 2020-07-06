@@ -6,10 +6,25 @@ import Layout from './hoc/Layout/Layout';
 import ProductsBuilder from './containers/Products/ProductsBuilder';
 import Logout from './containers/Auth/Logout/Logout';
 import * as actions from './store/actions/index';
-import './App.css';
 
 const Product = React.lazy(() => {
   return import('./components/Product/Product');
+});
+
+const Dashboard = React.lazy(() => {
+  return import('./containers/Dashboard/Dashboard');
+});
+
+const ProductsController = React.lazy(() => {
+  return import('./components/Controller/ProductsController');
+});
+
+const OrdersController = React.lazy(() => {
+  return import('./components/Controller/OrdersController');
+});
+
+const UsersController = React.lazy(() => {
+  return import('./components/Controller/UsersController');
 });
 
 const Orders = React.lazy(() => {
@@ -25,10 +40,11 @@ const Login = React.lazy(() => {
 });
 
 const app = React.memo(props => {
-  const { onTryAutoSignup } = props;
+  const { onTryAutoSignup, onTryEdit } = props;
 
   useEffect(() => {
     onTryAutoSignup();
+    
   }, [onTryAutoSignup]);
 
   let routes = (
@@ -37,6 +53,10 @@ const app = React.memo(props => {
       <Route path="/user/login" render={props => <Login {...props} />} />
       <Route path='/api/:id' render={props => <Product {...props} />} />
       <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
+      <Route path="/dashboard" render={props => <Dashboard {...props} />} />
+      <Route path="/dashboard/products" render={props => <ProductsController {...props} />} />
+      <Route path="/dashboard/users" render={props => <UsersController {...props} />} />
+      <Route path="/dashboard/orders" render={props => <OrdersController {...props} />} />
     </Switch>
   );
 
@@ -54,6 +74,15 @@ const app = React.memo(props => {
     );
   }
 
+  // if(props.isAdmin) {
+  //   routes = ( 
+      // <Switch>
+        // <Route path="/dashboard" component={Dashboard} />
+        
+      // </Switch>
+  //   )
+  // }
+
   return (
     <div>
       <Layout>
@@ -67,13 +96,15 @@ const app = React.memo(props => {
 
 const mapStateToProps = state => {
   return {
-  isAuthenticated: state.auth.token !== null
+  isAuthenticated: state.auth.token !== null,
+  // isAdmin: state.auth.isAdmin !== null
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return{
-  onTryAutoSignup: () => dispatch(actions.authCheckState())
+  onTryAutoSignup: () => dispatch(actions.authCheckState()),
+  // onTryEdit: () => dispatch(actions.adminCheckState())
   };
 };
 
