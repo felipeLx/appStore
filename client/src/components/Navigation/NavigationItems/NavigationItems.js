@@ -16,7 +16,7 @@ const navigationItems = (props) => (
         {!props.isAuthenticated 
             ? <NavigationItem link="/user/login">Login</NavigationItem>
             : null}
-        {!props.isAuthenticated 
+        {props.isAuthenticated 
             ? <NavigationItem link="/dashboard">Dashboard</NavigationItem>
             : null}
     </ul>
