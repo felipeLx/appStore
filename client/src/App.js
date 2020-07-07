@@ -28,7 +28,7 @@ const UsersController = React.lazy(() => {
 });
 
 const Orders = React.lazy(() => {
-  return import('./components/Order/Order');
+  return import('./containers/Orders/Orders');
 });
 
 const Auth = React.lazy(() => {
@@ -53,10 +53,7 @@ const app = React.memo(props => {
       <Route path="/user/login" render={props => <Login {...props} />} />
       <Route path='/api/:id' render={props => <Product {...props} />} />
       <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
-      <Route path="/dashboard" render={props => <Dashboard {...props} />} />
-      <Route path="/dashboard/products" render={props => <ProductsController {...props} />} />
-      <Route path="/dashboard/users" render={props => <UsersController {...props} />} />
-      <Route path="/dashboard/orders" render={props => <OrdersController {...props} />} />
+      
     </Switch>
   );
 
@@ -64,6 +61,10 @@ const app = React.memo(props => {
     routes = ( 
       <Switch>
       <Route path='/api/:id' render={props => <Product {...props} />} />
+      <Route path="/dashboard" render={props => <Dashboard {...props} />} />
+      <Route path="/dashboard/products" render={props => <ProductsController {...props} />} />
+      <Route path="/dashboard/users" render={props => <UsersController {...props} />} />
+      <Route path="/dashboard/orders" render={props => <OrdersController {...props} />} />
       <Route path="/orders" render={props => <Orders {...props} />} />
       <Route path="/user/logout" component={Logout} />
       <Route path="/user/auth" render={props => <Auth {...props} />} />
