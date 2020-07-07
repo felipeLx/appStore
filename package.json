@@ -9,7 +9,7 @@
     "server": "nodemon app.js --ignore client",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "start": "node app.js",
-    "heroku-postbuild": "ng build --prod"
+    "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
