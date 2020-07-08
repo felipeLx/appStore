@@ -5,26 +5,23 @@ import { connect } from 'react-redux';
 import Layout from './hoc/Layout/Layout';
 import ProductsBuilder from './containers/Products/ProductsBuilder';
 import Logout from './containers/Auth/Logout/Logout';
+import Product from './components/Product/Product';
 import * as actions from './store/actions/index';
-
-const Product = React.lazy(() => {
-  return import('./components/Product/Product');
-});
 
 const Dashboard = React.lazy(() => {
   return import('./containers/Dashboard/Dashboard');
 });
 
 const ProductsController = React.lazy(() => {
-  return import('./components/Controller/ProductsController');
+  return import('./components/Controller/Products/ProductsController');
 });
 
 const OrdersController = React.lazy(() => {
-  return import('./components/Controller/OrdersController');
+  return import('./components/Controller/Orders/OrdersController');
 });
 
 const UsersController = React.lazy(() => {
-  return import('./components/Controller/UsersController');
+  return import('./components/Controller/Users/UsersController');
 });
 
 const Orders = React.lazy(() => {
@@ -60,7 +57,7 @@ const app = React.memo(props => {
   if(props.isAuthenticated) {
     routes = ( 
       <Switch>
-      <Route path='/api/:id' render={props => <Product {...props} />} />
+      <Route path='/api/:id' exact component={Product} />
       <Route path="/dashboard" render={props => <Dashboard {...props} />} />
       <Route path="/dashboard/products" render={props => <ProductsController {...props} />} />
       <Route path="/dashboard/users" render={props => <UsersController {...props} />} />

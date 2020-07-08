@@ -2,7 +2,8 @@
     width: 100%;
     margin: auto;
     height: 250px;
-    text-align: center;
+    display: flex;
+    text-align: left;
     font-weight: bold;
     font-size: 1.2rem;
 }
@@ -26,4 +27,9 @@
         width: 700px;
         height: 600px;
     }
+}
+
+.Buttons {
+    text-align: center;
+    padding: 10 0px;
 }

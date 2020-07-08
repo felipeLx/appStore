@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 import {Card, Button} from 'react-bootstrap';
 import api from '../../api/index';
 
 import Aux from '../../hoc/Aux/Aux';
-// import Product from '../../components/Product/Product';
+import Product from '../../components/Product/Product';
 
 const ProductsBuilder = () => {
 
     const [productsList, setProductsList] = useState([]);
     const [orderQuantity, setOrderQuantity] = useState(0);
-    const [userId, setUserId] = useState('');
+    // const [userId, setUserId] = useState('');
     const [order,setOrder] = useState([]);
+    // const [showProduct, setShowProduct] = useState(false);
 
     useEffect(() => {
         api.getAllProducts()
@@ -20,17 +22,11 @@ const ProductsBuilder = () => {
             .catch(err => console.log(err));
     }, []);
     
-    const openProductHandler = async(event) => {
-        event.preventDefault();
-        setUserId(event.target.id);
-        await api.getOneProduct(event.target.id)
-                .then(res => {
-                    return (
-                        window.location.href = `${res.config.url}`
-                    )
-                })
-                .catch(err => console.log(err));
-    };
+    // const openProductHandler = event => {
+    //     event.preventDefault();
+    //     setUserId(event.target.id);
+    //     setShowProduct(!showProduct);
+    // };
 
     const addHandler = () => {
         let quantity = orderQuantity + 1;
@@ -51,7 +47,7 @@ const ProductsBuilder = () => {
         let total = orderQuantity * productsList[0].price;
         let newOrder = {
             total: total,
-            userId: userId,
+            userId: 1,
             productId: productsList[0]._id,
         }
         await api.insertOrder(newOrder)
@@ -68,7 +64,7 @@ const ProductsBuilder = () => {
                     <Card.Img className="card-img-top" variant="top" src={product.picture} />
                     <Card.Body className="card-body">
                         <Card.Title>Produto: {product.product}</Card.Title>
-                        <Button id={product._id} onClick={(event) => openProductHandler(event)} variant="primary">Ver Detalhe</Button>
+                        <NavLink to={`/api/${product._id}`} className="btn btn-primary">Detalhe</NavLink>
                         <hr />
                         <Card.Text>
                         Categoria: {product.category}
@@ -93,17 +89,20 @@ const ProductsBuilder = () => {
     };
     
     return (
-        <Aux>
-            <hr />
-            <div className="container cards">
-                <div className="row">
-                    {productsList.map(product => {
-                        return renderProducts(product);
-                    })}
-                
+        <div>
+            <Aux>
+                <hr />
+                <div className="container cards">
+                    <div className="row">
+                        {productsList.map(product => {
+                            return renderProducts(product);
+                        })}
+                    
+                    </div>
                 </div>
-            </div>
-        </Aux>
+                
+            </Aux>
+        </div>
     );
 };
 

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Button, ButtonGroup } from 'react-bootstrap';
 
-import api from '../../api/index';
-import Input from '../UI/Input/Input';
-import Spinner from '../UI/Spinner/Spinner';
-import { updateObject } from '../../shared/utility';
+import api from '../../../api/index';
+import Input from '../../UI/Input/Input';
+import Spinner from '../../UI/Spinner/Spinner';
+import { updateObject } from '../../../shared/utility';
 
-const productsController = React.memo(props => {
+const ordersController = React.memo(props => {
 
-    const [usersList, setUsersList] = useState([]);
+    const [ordersList, setOrdersList] = useState([]);
     const [controls, setControls] = useState({
         name: {
             elementType: 'input',
@@ -53,23 +53,23 @@ const productsController = React.memo(props => {
     });
     
     useEffect(() => {
-        api.getAllUsers()
-            .then(users => {
-                setUsersList(users.data);
+        api.getAllOrders()
+            .then(orders => {
+                setOrdersList(orders.data);
             })
             .catch(err => console.log(err));
     }, []);
     
 
     const editHandler = async(id) => {
-        await api.updateUserById(id)
-            .then(prod => console.log('updated'))
+        await api.updateOrderById(id)
+            .then(ord => console.log('edited'))
             .catch(err => console.log(err))
     };
 
     const deleteHandler = async(id) => {
-        await api.deleteUserById(id)
-        .then(prod => console.log('deleted'))
+        await api.deleteOrderById(id)
+        .then(ord => console.log('deleted'))
         .catch(err => console.log(err))
     };
 
@@ -110,21 +110,17 @@ const productsController = React.memo(props => {
     //         value={formElement.config.value}
     //         changed={( event ) => inputChangedHandler( event, formElement.id )} />
     // ));
-
-    let form = usersList.map(user => (
-        <Card key={user._id} className="card">
+    let form = ordersList.map(order => (
+        <Card key={order._id} className="card">
             <Card.Body className="card-body">
-                <Card.Text><strong>ID:</strong> {user._id}</Card.Text>
-                <Card.Text><strong>Username:</strong> {user.username}</Card.Text>
-                <Card.Text><strong>Email:</strong> {user.email}</Card.Text>
-                <Card.Text><strong>OrderId:</strong> {user.orderId}</Card.Text>
-                <Card.Text><strong>Date:</strong> {user.dataCreated}</Card.Text>
+                <Card.Text><strong>ID:</strong> {order._id}</Card.Text>
+                <Card.Text><strong>UserId:</strong> {order.userId}</Card.Text>
+                <Card.Text><strong>ProductId:</strong> {order.productId}</Card.Text>
             </Card.Body>
             <ButtonGroup>
                 <Button onClick={(event) => editHandler(event.target.params.id)} className="btn btn-info btn-space">EDIT</Button>
                 <Button onClick={(event) => deleteHandler(event.target.params.id)} className="btn btn-danger btn-space">DELETE</Button>
             </ButtonGroup>
-                    
         </Card>
 
     ));
@@ -143,7 +139,8 @@ const productsController = React.memo(props => {
 
     return(
         <div className="container">
-            <div className="row">
+            <div className="col">
+                
                 <form>
                   {form}
                 </form>
@@ -153,4 +150,4 @@ const productsController = React.memo(props => {
     
 });
 
-export default productsController;
+export default ordersController;

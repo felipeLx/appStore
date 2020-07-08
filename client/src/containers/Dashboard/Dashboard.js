@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Card, Button, Form, ButtonGroup } from 'react-bootstrap';
 // import { useHistory } from 'react-router-dom';
 
-import ProductsController from '../../components/Controller/ProductsController';
-import UsersController from '../../components/Controller/UsersController';
-import OrdersController from '../../components/Controller/OrdersController';
+import ProductsController from '../../components/Controller/Products/ProductsController';
+import UsersController from '../../components/Controller/Users/UsersController';
+import OrdersController from '../../components/Controller/Orders/OrdersController';
 
 const Dashboard = () => {
     // const history = useHistory();
@@ -77,7 +77,7 @@ const Dashboard = () => {
     return(
         <div className="container">
             <div className="row">
-                <div className="col">
+                <div  className="col-md-4 col-lg-2">
                     <Card>
                         <Card.Title>Produtos</Card.Title>
                         <ButtonGroup>
@@ -86,14 +86,14 @@ const Dashboard = () => {
                         </ButtonGroup>
                     </Card>
                 </div>
-                <div className="col">
+                <div  className="col-md-4 col-lg-2">
                     <Card>
                         <Card.Title>Pedidos</Card.Title>
                         <Button onClick={() => ordersHandler()} variant="secondary">Ver</Button>
                         {/* <Button onClick={() => createHandler()} className="btn btn-warning">Novo Produto</Button> */}
                     </Card>
                 </div>
-                <div className="col">
+                <div className="col-md-4 col-lg-2">
                     <Card>
                         <Card.Title>Usuários</Card.Title>
                         <Button onClick={() => usersHandler()} variant="primary">Ver</Button>
