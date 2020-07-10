@@ -47,11 +47,11 @@ export const auth = (email, password, isSignUp) => {
     };
 };
 
-// export const authCheckState = () => {
-//     return {
-//         type: actionTypes.AUTH_CHECK_STATE
-//     };
-// };
+export const authCheckState = () => {
+    return {
+        type: actionTypes.AUTH_CHECK_STATE
+    };
+};
 
 export const signup = (username, email, password) => {
     return {

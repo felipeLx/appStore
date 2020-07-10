@@ -49,7 +49,9 @@ export function* loginUserSaga(action) {
 
             let url = '/user/login';
         try{
-            const response = yield api.post(url, loginData).then(res => console.log(res));
+            const response = yield api.post(url, loginData);
+            console.log(response);
+            
             const expirationDate = yield new Date(new Date().getTime() * 10000);
                 yield localStorage.setItem('token', response.data.password + response.data._id);
                 yield localStorage.setItem('expirationDate', expirationDate);
@@ -61,23 +63,26 @@ export function* loginUserSaga(action) {
                 console.log('not possible to login: ' + error);
                 yield put(actions.authFail(error.response.data.error));
             }        
+            console.log(localStorage.getItem('token'));
+            
 }
 
-// export function* authCheckStateSaga(action) {
-//     const token = yield localStorage.getItem('token');
-//         if(!token) {
-//             yield put(actions.logout());
-//         } else {
-//             const expirationDate = yield new Date(localStorage.getItem('expirationDate'));
-//             if(expirationDate <= new Date()) {
-//                 yield put(actions.logout());
-//             } else {
-//                 const userId = yield localStorage.getItem('userId');
-//                 yield put(actions.authSuccess(token, userId));
-//                 yield put(actions.checkAuthTimeout((expirationDate.getTime() - new Date().getTime())/1000));
-//             }
-//         }
-// }
+export function* authCheckStateSaga(action) {
+    const token = yield localStorage.getItem('token');
+        if(!token) {
+            yield put(actions.logout());
+        } 
+        // else {
+        //     const expirationDate = yield new Date(localStorage.getItem('expirationDate'));
+        //     if(expirationDate <= new Date()) {
+        //         yield put(actions.logout());
+        //     } 
+            else {
+                const userId = yield localStorage.getItem('userId');
+                yield put(actions.authSuccess(token, userId));
+                // yield put(actions.checkAuthTimeout((expirationDate.getTime() - new Date().getTime())/1000));
+            }
+}
 
 // export function* getAllSaga(action) {
 //     try {

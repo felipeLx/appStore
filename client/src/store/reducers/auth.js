@@ -1,13 +1,10 @@
 import * as actionTypes from '../actions/actionTypes';
 import { updateObject } from '../../shared/utility';
 
-let user = localStorage.getItem('userId');
-
-const initialState = user ? { loggedIn: true, user } :{
+const initialState = {
     token: null,
     userId: null,
     error: null,
-    loggedIn: false,
     loading: false,
 };
 
@@ -21,12 +18,11 @@ const authSuccess = (state, action) => {
         userId: action.userId,
         error: null,
         loading: false,
-        loggedIn: true
     });
 };
 
 const authLogout = (state, action) => {
-    return updateObject(state, { token: null, userId: null, loggedIn: false});
+    return updateObject(state, { token: null, userId: null });
 };
 
 const authFail = (state, action) => {

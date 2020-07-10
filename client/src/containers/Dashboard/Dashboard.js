@@ -44,7 +44,7 @@ const Dashboard = props => {
 
       
   if ( !props.isAuthenticated ) {
-    window.location.assign('/user/signup')
+    window.location.assign('/')
   }
 
     const createHandler = () => {

@@ -33,10 +33,10 @@ const layout = React.memo(props => {
         )
 });
 
-const mapStateToPropst = state => {
+const mapStateToProps = state => {
     return {
         isAuthenticated: state.auth.token !== null
     };
 };
 
-export default connect (mapStateToPropst) (layout);
+export default connect (mapStateToProps) (layout);

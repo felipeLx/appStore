@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -6,7 +6,7 @@ import Layout from './hoc/Layout/Layout';
 import ProductsBuilder from './containers/Products/ProductsBuilder';
 import Logout from './containers/Auth/Logout/Logout';
 import Product from './components/Product/Product';
-// import * as actions from './store/actions/index';
+import * as actions from './store/actions/index';
 
 const Dashboard = React.lazy(() => {
   return import('./containers/Dashboard/Dashboard');
@@ -37,22 +37,22 @@ const Login = React.lazy(() => {
 });
 
 const app = React.memo(props => {
-  // const { onTryAutoSignup } = props;
+  const { onTryAutoSignup } = props;
 
-  // useEffect(() => {
-  //   onTryAutoSignup();
-  // }, [onTryAutoSignup]);
+  useEffect(() => {
+    onTryAutoSignup();
+  }, [onTryAutoSignup]);
   
   let routes = (
       <Switch>
-        <Route path="/user/signup" render={props => <Signup {...props} />} />
-        <Route path="/user/login" render={props => <Login {...props} />} />
-        <Route path='/api/:id' render={props => <Product {...props} />} />
-        <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
-        <Route path="/dashboard" component={Dashboard} />
-        <Route path="/dashboard/products" render={props => <ProductsController {...props} />} />
-        <Route path="/dashboard/user" render={props => <UsersController {...props} />} />
-        <Route path="/dashboard/orders" render={props => <OrdersController {...props} />} />
+          <Route path="/user/signup" render={props => <Signup {...props} />} />
+          <Route path="/user/login" render={props => <Login {...props} />} />
+          <Route path='/api/:id' render={props => <Product {...props} />} />
+          <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
+          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/dashboard/products" render={props => <ProductsController {...props} />} />
+          <Route path="/dashboard/user" render={props => <UsersController {...props} />} />
+          <Route path="/dashboard/orders" render={props => <OrdersController {...props} />} />
       </Switch>
   );
 
@@ -67,7 +67,7 @@ const app = React.memo(props => {
           <Route path="/user/login" render={props => <Login {...props} />} />
           <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
           <Redirect to="/" />
-        </Switch>
+      </Switch>
     );
   }
 
@@ -97,10 +97,10 @@ const mapStateToProps = state => {
   };
 };
 
-// const mapDispatchToProps = dispatch => {
-//   return{
-//     onTryAutoSignup: () => dispatch(actions.authCheckState())
-//   };
-// };
+const mapDispatchToProps = dispatch => {
+  return{
+    onTryAutoSignup: () => dispatch(actions.authCheckState())
+  };
+};
 
-export default withRouter(connect(mapStateToProps) (app));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps) (app));

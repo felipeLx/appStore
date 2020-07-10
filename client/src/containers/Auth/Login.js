@@ -39,13 +39,11 @@ const login = React.memo(props => {
   }
   });
 
-  const [isSignup, setIsSignup] = useState(false);
-
-  const { onLogout, buildingProduct } = props;
+  const [isSignup] = useState(true);
 
   useEffect(() => {
 
-  }, [buildingProduct, onLogout]);
+  }, []);
 
   const inputChangedHandler = ( event, controlName ) => {
   const updatedControls = updateObject( controls, {
@@ -59,7 +57,6 @@ const login = React.memo(props => {
   };
 
   const submitHandler = () => {
-    setIsSignup(!isSignup);
     props.onAuth(controls.email.value,controls.password.value,isSignup);
   };
 
@@ -114,7 +111,6 @@ const login = React.memo(props => {
 
 const mapStateToProps = state => {
   return {
-      logginIn: state.auth,
       loading: state.auth.loading,
       error: state.auth.error,
       isAuthenticated: state.auth.token !== null,

@@ -42,14 +42,11 @@ const product = React.memo(props => {
                         <Card.Text>Descrição: {product.description}</Card.Text>
                         <Card.Text>Preço: {product.price}</Card.Text>
                         <Card.Text>Marca: {product.brand}</Card.Text>
-                        <Card.Text className={classes.Buttons}>
-                            <ButtonGroup>
+                            <ButtonGroup className={classes.Buttons}>
                                 <Button onClick={() => lessHandler()} className="btn btn-danger">-</Button>
                                 <Button onClick={() => addHandler()} className="btn btn-primary">+</Button>
                             </ButtonGroup>
-                        <hr />
                         <Card.Link href="#">Comprar</Card.Link>
-                        </Card.Text>
                     </Card.Body>
                 </Card>
             </div>

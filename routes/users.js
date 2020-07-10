@@ -5,12 +5,12 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const User = require('../models/user.model');
-const { forwardAuthenticated, ensureAuthenticated } = require('../config/signup');
-const { passportAuth } = require('../config/passport');
+// const { forwardAuthenticated, ensureAuthenticated } = require('../config/signup');
+// const { passportAuth } = require('../config/passport');
 
-router.route('/user/login', forwardAuthenticated).get((req, res) => res.redirect('/'));
-router.route('/user/login', ensureAuthenticated).get((req, res) => res.redirect('/'));
-router.route('/user/login', passportAuth).get((req, res) => res.redirect('/'));
+// router.route('/user/login', forwardAuthenticated).get((req, res) => res.redirect('/'));
+// router.route('/user/login', ensureAuthenticated).get((req, res) => res.redirect('/'));
+// router.route('/user/login', passportAuth).get((req, res) => res.redirect('/'));
 
 router.route('/').get(async(req,res) => {
     

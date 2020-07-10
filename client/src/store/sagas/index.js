@@ -11,7 +11,7 @@ export function* watchAuth() {
         takeEvery(actionType.AUTH_CHECK_TIMEOUT, checkAuthTimeoutSaga),
         takeEvery(actionType.AUTH_USER, loginUserSaga),
         takeEvery(actionType.SIGNUP_USER, registerUserSaga),
-        // takeEvery(actionType.AUTH_CHECK_STATE, authCheckStateSaga)  
+        takeEvery(actionType.AUTH_CHECK_STATE, authCheckStateSaga)  
     ]);
 }
 
