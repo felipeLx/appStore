@@ -19,7 +19,7 @@ export const updateOrderById = (id, payload) => api.put(`/order/${id}`, payload)
 export const deleteOrderById = id => api.delete(`/order/${id}`);
 
 // Users
-export const registerUser = payload => api.post('/user/auth', payload);
+export const registerUser = payload => api.post('/user/signup', payload);
 export const loginUser = payload => api.post('/user/login', payload);
 export const logoutUser = () => api.post('/user/logout');
 export const getAllUsers = () => api.get('/user');

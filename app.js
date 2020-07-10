@@ -1,3 +1,4 @@
+"use strict";
 require("dotenv").config();
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -15,9 +16,11 @@ const productsRoute = require('./routes/products');
 const ordersRoute = require('./routes/orders');
 const dashboardRoute = require('./routes/dashboard');
 const usersRoute = require('./routes/users');
+require("babel-core/register");
+require("babel-polyfill");
 
 // Passport config
-require('./config/passport')(passport);
+// require('./config/passport')(passport);
 
 const app = express();
 

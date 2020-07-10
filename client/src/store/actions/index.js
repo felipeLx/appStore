@@ -4,7 +4,7 @@ export {
     initProducts,
     setProducts,
     fetchProductsFailed
-} from './productBuilder';
+} from './product';
 export {
     purchaseProduct,
     purchaseInit,
@@ -18,15 +18,15 @@ export {
 } from './order';
 export {
     auth,
-    login,
     logout,
-    setAuthRedirectPath,
-    authCheckState,
+    // authCheckState,
     logoutSucceed,
     authStart,
     authSuccess,
     authFail,
     checkAuthTimeout,
-    getUser,
-    adminCheckState
+    signup,
+    signupStart,
+    signupSuccess,
+    signupFail
 } from './auth';

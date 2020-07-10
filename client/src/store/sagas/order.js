@@ -1,13 +1,16 @@
 import { put } from 'redux-saga/effects';
 import axios from 'axios';
-
 import * as actions from '../actions/index';
+
+const api = axios.create({
+    baseURL: '/order'
+});
 
 export function* purchaseProductSaga(action) {
     
     yield put( actions.purchaseProductStart() );
     try{
-        const response = yield axios.post( '/orders.json?auth=' + action.token, action.orderData )
+        const response = yield api.post( '/orders.json?auth=' + action.token, action.orderData )
         //console.log( response.data );
         yield put( actions.purchaseProductSuccess( response.data.name, action.orderData ) );
         } catch(error)  {
@@ -17,9 +20,9 @@ export function* purchaseProductSaga(action) {
 
 export function* fetchOrdersSaga(action) {
     yield put(actions.fetchOrdersStart());
-        const queryParams = '?auth=' + action.token + '&orderBy="username"&equalTo="' + action.username + '"';
+        const queryParams = '?auth=' + action.token + '&orderBy="userId"&equalTo="' + action.userId + '"';
         try{
-            const response = yield axios.get( '/orders.json' + queryParams );
+            const response = yield api.get( '/orders.json' + queryParams );
             const fetchedOrders = [];
                 for ( let key in response.data ) {
                     fetchedOrders.push( {

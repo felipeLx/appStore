@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {Card, Button} from 'react-bootstrap';
-import api from '../../api/index';
 
+import api from '../../api/index';
 import Aux from '../../hoc/Aux/Aux';
-import Product from '../../components/Product/Product';
 
 const ProductsBuilder = () => {
 
     const [productsList, setProductsList] = useState([]);
     const [orderQuantity, setOrderQuantity] = useState(0);
-    // const [userId, setUserId] = useState('');
-    const [order,setOrder] = useState([]);
-    // const [showProduct, setShowProduct] = useState(false);
+    const [setOrder] = useState([]);
 
     useEffect(() => {
         api.getAllProducts()
@@ -22,12 +19,6 @@ const ProductsBuilder = () => {
             .catch(err => console.log(err));
     }, []);
     
-    // const openProductHandler = event => {
-    //     event.preventDefault();
-    //     setUserId(event.target.id);
-    //     setShowProduct(!showProduct);
-    // };
-
     const addHandler = () => {
         let quantity = orderQuantity + 1;
         setOrderQuantity(quantity);

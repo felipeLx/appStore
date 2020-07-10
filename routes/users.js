@@ -5,10 +5,12 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const User = require('../models/user.model');
-const { forwardAuthenticated } = require('../config/auth');
+const { forwardAuthenticated, ensureAuthenticated } = require('../config/signup');
+const { passportAuth } = require('../config/passport');
 
-router.route('/login', forwardAuthenticated).get((req, res) => res.redirect('/login'));
-router.route('/auth', forwardAuthenticated).get((req, res) => res.redirect('/auth'));
+router.route('/user/login', forwardAuthenticated).get((req, res) => res.redirect('/'));
+router.route('/user/login', ensureAuthenticated).get((req, res) => res.redirect('/'));
+router.route('/user/login', passportAuth).get((req, res) => res.redirect('/'));
 
 router.route('/').get(async(req,res) => {
     
@@ -35,16 +37,12 @@ router.route('/login').post(async(req,res) => {
     await User.findOne({email: email})
         .then((user) => {
                 passport.authenticate('local')(req, res,() => {
-                    if(user.username !== 'admin') {
                         res.status(200).send(user);
-                    } else {
-                        res.redirect('/dasboard');
-                    }
                 });
-            })
+        })
         .catch(err => {
             console.log(err);
-            res.redirect('/user/login');
+            res.redirect('/user/signup');
         });
     
 });
@@ -52,30 +50,22 @@ router.route('/login').post(async(req,res) => {
 // Logout
 router.route('/logout').post(async(req,res) => {
     req.logout();
-    res.status(200).redirect('/user/login');
+    res.status(200).redirect('/');
 })
 
 // Register
-router.route('/auth').post(async(req, res) => {
+router.route('/signup').post(async(req, res) => {
     if(!req.body) {
         return res.status(500).send('Informar todos os campos antes de enviar');
     }
-
-    const {username, email, password, password2} = req.body;
+    console.log(req.body);
+    
+    const {username, email, password} = req.body;
     let errors = [];
 
-    if (!username || !email || !password || !password2) {
+    if (!username || !email || !password) {
         errors.push({ msg: 'Please enter all fields' });
       }
-    
-      if (password != password2) {
-        errors.push({ msg: 'Passwords do not match' });
-      }
-    
-      if (password.length < 6) {
-        errors.push({ msg: 'Password must be at least 6 characters' });
-      }
-    
       if (errors.length > 0) {
         res.send('Error to access');
       } else {
@@ -97,8 +87,8 @@ router.route('/auth').post(async(req, res) => {
                 newUser
                   .save()
                   .then(user => {
-                    res.status(200).send(user);
-                    res.redirect('/api');
+                      console.log(res)
+                    res.status(200).send(user)
                   })
                   .catch(err => console.log(err));
               });

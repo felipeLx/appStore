@@ -3,17 +3,14 @@ import { Card, Button } from 'react-bootstrap';
 
 import api from '../../../api/index';
 import Input from '../../UI/Input/Input';
-import Spinner from '../../UI/Spinner/Spinner';
 import { updateObject, checkValidity } from '../../../shared/utility';
 
 const productsController = React.memo(props => {
 
     const [editFields, setEditFields] = useState(false); 
     const [productsList, setProductsList] = useState([]);
+    const [id, setId] = useState('');
     const [controls, setControls] = useState({
-        id: {
-            value: ''
-        },
         name: {
           elementType: 'input',
           elementConfig: {
@@ -31,7 +28,7 @@ const productsController = React.memo(props => {
             value: ''
           },
         description: {
-            elementType: 'input',
+            elementType: 'textarea',
             elementConfig: {
                 type: 'textarea',
                 placeholder: 'Descrição do produto'
@@ -53,55 +50,57 @@ const productsController = React.memo(props => {
                 placeholder: 'Categoria'
             },
             value: ''
-          },    
+          }
     });
     
     useEffect(() => {
         api.getAllProducts()
             .then(products => {
-                console.log(products.data);
-                
                 setProductsList(products.data);
             })
             .catch(err => console.log(err));
     }, []);
 
-    const editHandler = (index) => {
+    const editHandler = () => {
         
         setEditFields(!editFields);
+        setId(productsList[0]._id);
         setControls({
-            id: {
-                value: productsList[index].id
-            },
             name: {
-                value: productsList[index].product 
+                value: productsList[0].product 
             },
             brand: {
-                value: productsList[index].brand 
+                value: productsList[0].brand 
             },
             category: {
-                value: productsList[index].category 
+                value: productsList[0].category 
             },
             price: {
-                value: productsList[index].price
+                value: productsList[0].price
+            },
+            description: {
+                value: productsList[0].description
             },
         });
-        console.log("controls: " + controls);
-        console.log("productList: " + productsList);
-        
-        
     };
 
-    const sendEditedHandler = async(id) => {
-        
-        await api.updateProductById(id)
-            .then(prod => console.log(prod))
+    const sendEditedHandler = async() => {
+        const updateProduct = {
+            product: controls.name.value,
+            brand: controls.brand.value,
+            category: controls.category.value,
+            price: controls.price.value,
+            description: controls.description.value,
+        };
+
+        await api.updateProductById(id, updateProduct )
+            .then(prod => window.location.reload(true))
             .catch(err => console.log(err))
     };
 
     const deleteHandler = async(id) => {
         await api.deleteProductById(id)
-        .then(prod => console.log('deleted'))
+        .then(prod => window.location.reload(true))
         .catch(err => console.log(err))
     };
 
@@ -110,9 +109,10 @@ const productsController = React.memo(props => {
                 <Card.Img className="card-img-top" variant="top" src={product.picture} />
                 <Card.Body className="card-body">
                     <Card.Text><strong>Name: </strong>{product.product}</Card.Text>
-                    <Card.Text><strong>Brand: </strong>{product.brand}</Card.Text>
-                    <Card.Text><strong>Price: </strong>{product.price}</Card.Text>
-                    <Card.Text><strong>Description:</strong> {product.description}</Card.Text>
+                    <Card.Text><strong>Marca</strong>{product.brand}</Card.Text>
+                    <Card.Text><strong>Preço: </strong>{product.price}</Card.Text>
+                    <Card.Text><strong>Categoria: </strong>{product.category}</Card.Text>
+                    <Card.Text><strong>Descrição:</strong> {product.description}</Card.Text>
                 </Card.Body>
             </Card>
 
@@ -137,28 +137,17 @@ const productsController = React.memo(props => {
             } );
     };
 
-    if ( props.loading ) {
-        form = <Spinner />
-    }
-
-    let errorMessage = null;
-
-    if ( props.error ) {
-        errorMessage = (
-            <p>{props.error.message}</p>
-        );
-    }
-
     if(editFields) {
         form = formElementsArray.map( formElement => (
-                <Input
-                    key={formElement.id}
-                    elementType={formElement.config.elementType}
-                    elementConfig={formElement.config.elementConfig}
+                <Input  
+                    key={formElement.config.value}
+                    label={formElement.id}
                     value={formElement.config.value}
                     changed={( event ) => inputChangedHandler( event, formElement.id )} />
-            ));
-    }
+            )
+        )       
+    };
+    
 
     return(
         <div className="container">
@@ -167,8 +156,8 @@ const productsController = React.memo(props => {
                   {form}
                     <div className="col">
                         {!editFields ? 
-                            <Button onClick={() => editHandler(index)} className="btn btn-warning">EDITAR</Button> :
-                            <Button onClick={(event) => sendEditedHandler(event.target.params.id)} className="btn btn-info">ENVIAR</Button>
+                            <Button onClick={(index) => editHandler(index)} className="btn btn-warning">EDITAR</Button> :
+                            <Button onClick={() => sendEditedHandler()} className="btn btn-info">ENVIAR</Button>
                         }
                     </div>
                     <div className="col">
@@ -177,8 +166,7 @@ const productsController = React.memo(props => {
                 </form>
             </div>
         </div>
-    );
-    
+    ); 
 });
 
 export default productsController;

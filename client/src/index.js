@@ -8,9 +8,11 @@ import createSagaMiddleware from 'redux-saga';
 
 import './index.css';
 import App from './App';
-import productBuilderReducer from './store/reducers/productBuilder';
+import productBuilderReducer from './store/reducers/product';
 import orderReducer from './store/reducers/order';
 import authReducer from './store/reducers/auth';
+import signupReducer from './store/reducers/signup';
+
 import {watchAuth, watchProductBuilder, watchOrder } from './store/sagas';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
@@ -18,7 +20,8 @@ const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX
 const rootReducer = combineReducers({
     productBuilder: productBuilderReducer,
     order: orderReducer,
-    auth: authReducer
+    auth: authReducer,
+    signup: signupReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();

@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
 import { Card, Button, Form, ButtonGroup } from 'react-bootstrap';
-// import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import ProductsController from '../../components/Controller/Products/ProductsController';
 import UsersController from '../../components/Controller/Users/UsersController';
 import OrdersController from '../../components/Controller/Orders/OrdersController';
 
-const Dashboard = () => {
-    // const history = useHistory();
+const Dashboard = props => {
     const [createProduct, setCreateProduct] = useState(false);
     const [showProducts, setShowProducts] = useState(false);
     const [showOrders, setShowOrders] = useState(false);
     const [showUsers, setShowUsers] = useState(false);
-    const [newProduct, setNewProduct] = useState({
-        product: '',
-        brand: '',
-        price: '',
-        description: ''
-    });
-
+    // const [newProduct, setNewProduct] = useState({
+    //     product: '',
+    //     brand: '',
+    //     price: '',
+    //     description: ''
+    // });
+    
     const productsHandler = () => {
         setShowProducts(!showProducts);
         setShowOrders(false);
@@ -42,6 +41,11 @@ const Dashboard = () => {
     const createUserHandler = () => {
         console.log('createUserHandler = Dashboard');   
     };
+
+      
+  if ( !props.isAuthenticated ) {
+    window.location.assign('/user/signup')
+  }
 
     const createHandler = () => {
         setCreateProduct(!createProduct);
@@ -90,14 +94,12 @@ const Dashboard = () => {
                     <Card>
                         <Card.Title>Pedidos</Card.Title>
                         <Button onClick={() => ordersHandler()} variant="secondary">Ver</Button>
-                        {/* <Button onClick={() => createHandler()} className="btn btn-warning">Novo Produto</Button> */}
                     </Card>
                 </div>
                 <div className="col-md-4 col-lg-2">
                     <Card>
                         <Card.Title>Usuários</Card.Title>
                         <Button onClick={() => usersHandler()} variant="primary">Ver</Button>
-                        {/* <Button onClick={() => createHandler()} className="btn btn-warning">Novo Usuário</Button> */}
                     </Card>
                 </div>
             </div>
@@ -117,4 +119,10 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+const mapStateToProps = state => {
+    return {
+        isAuthenticated: state.auth.token !== null,
+    };
+  };
+
+export default connect(mapStateToProps)(Dashboard);

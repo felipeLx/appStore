@@ -6,35 +6,24 @@ export const authStart = () => {
     };
 };
 
-export const authSuccess = (token, username) => {
+export const authSuccess = (token, userId) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
         idToken: token,
-        username: username
+        userId: userId
     };
 };
 
 export const authFail = (error) => {
     return {
-        type: actionTypes.AUTH_SUCCESS,
+        type: actionTypes.AUTH_FAIL,
         error: error
     };
 };
 
 export const logout = () => {
-    // localStorage.removeItem('token');
-    // localStorage.removeItem('expirationDate');
-    // localStorage.removeItem('username');
     return {
         type: actionTypes.AUTH_INITIATE_LOGOUT
-    };
-}
-
-
-export const getUser = (username) => {
-    return {
-        type: actionTypes.GET_SUCCESS,
-        username: username
     };
 };
 
@@ -43,54 +32,53 @@ export const logoutSucceed = () => {
 };
 
 export const checkAuthTimeout = (expirationTime) => {
-    // return dispatch => {
-    //     setTimeout(() => {  
-    //         dispatch(this.logout()); 
-    //     }, expirationTime * 1000);
-    // };
     return {
         type: actionTypes.AUTH_CHECK_TIMEOUT,
         expirationTime: expirationTime
     }
 };
 
-export const auth = (username, email, password, password2, isSignUp) => {
+export const auth = (email, password, isSignUp) => {
     return {
         type: actionTypes.AUTH_USER,
-        username: username,
-        email: email,
-        password: password,
-        password2: password2,
-        isSignUp: isSignUp
+        email,
+        password,
+        isSignUp
     };
 };
 
-export const login = (email, password, isSignUp) => {
-    return {
-        type: actionTypes.LOGIN_USER,
-        email: email,
-        password: password,
-        isSignUp: isSignUp
-    };
-};
+// export const authCheckState = () => {
+//     return {
+//         type: actionTypes.AUTH_CHECK_STATE
+//     };
+// };
 
-export const setAuthRedirectPath = (path) => {
+export const signup = (username, email, password) => {
     return {
-        type: actionTypes.SET_AUTH_REDIRECT_PATH,
-        path: path
+        type: actionTypes.SIGNUP_USER,
+        username,
+        email,
+        password
     }
 };
 
-export const authCheckState = () => {
+export const signupStart = (user) => {
     return {
-        type: actionTypes.AUTH_CHECK_STATE
+        type: actionTypes.SIGNUP_START,
+        user
     };
 };
 
-export const adminCheckState = (username, isSignUp) => {
+export const signupSuccess = (user) => {
     return {
-        type: actionTypes.ADMIN_CHECK_STATE,
-        username: username,
-        isSignUp: isSignUp
+        type: actionTypes.SIGNUP_SUCCESS,
+        user
+    };
+};
+
+export const signupFail = (error) => {
+    return {
+        type: actionTypes.SIGNUP_FAIL,
+        error: error
     };
 };

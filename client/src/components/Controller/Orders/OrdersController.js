@@ -2,55 +2,54 @@ import React, { useEffect, useState } from 'react';
 import { Card, Button, ButtonGroup } from 'react-bootstrap';
 
 import api from '../../../api/index';
-import Input from '../../UI/Input/Input';
-import Spinner from '../../UI/Spinner/Spinner';
-import { updateObject } from '../../../shared/utility';
+// import Input from '../../UI/Input/Input';
+// import { updateObject } from '../../../shared/utility';
 
 const ordersController = React.memo(props => {
 
     const [ordersList, setOrdersList] = useState([]);
-    const [controls, setControls] = useState({
-        name: {
-            elementType: 'input',
-            elementConfig: {
-                type: 'text',
-                placeholder: 'Nome do produto'
-            },
-            value: ''
-        },
-        brand: {
-            elementType: 'input',
-            elementConfig: {
-                type: 'text',
-                placeholder: 'Marca'
-            },
-            value: ''
-        },
-        category: {
-            elementType: 'input',
-            elementConfig: {
-                type: 'text',
-                placeholder: 'Categoria'
-            },
-            value: ''
-        },
-        price: {
-            elementType: 'input',
-            elementConfig: {
-                type: 'text',
-                placeholder: 'Preço'
-            },
-            value: ''
-        },
-        description: {
-            elementType: 'input',
-            elementConfig: {
-                type: 'textarea',
-                placeholder: 'Descrição'
-            },
-            value: ''
-        },
-    });
+    // const [controls, setControls] = useState({
+    //     name: {
+    //         elementType: 'input',
+    //         elementConfig: {
+    //             type: 'text',
+    //             placeholder: 'Nome do produto'
+    //         },
+    //         value: ''
+    //     },
+    //     brand: {
+    //         elementType: 'input',
+    //         elementConfig: {
+    //             type: 'text',
+    //             placeholder: 'Marca'
+    //         },
+    //         value: ''
+    //     },
+    //     category: {
+    //         elementType: 'input',
+    //         elementConfig: {
+    //             type: 'text',
+    //             placeholder: 'Categoria'
+    //         },
+    //         value: ''
+    //     },
+    //     price: {
+    //         elementType: 'input',
+    //         elementConfig: {
+    //             type: 'text',
+    //             placeholder: 'Preço'
+    //         },
+    //         value: ''
+    //     },
+    //     description: {
+    //         elementType: 'input',
+    //         elementConfig: {
+    //             type: 'textarea',
+    //             placeholder: 'Descrição'
+    //         },
+    //         value: ''
+    //     },
+    // });
     
     useEffect(() => {
         api.getAllOrders()
@@ -73,25 +72,25 @@ const ordersController = React.memo(props => {
         .catch(err => console.log(err))
     };
 
-    const createHandler = async() => {
+    // const createHandler = async() => {
 
-        return <p>create new product</p>
-    };
+    //     return <p>create new product</p>
+    // };
 
-    const inputChangedHandler = ( event, controlName ) => {
-        const updatedControls = updateObject( controls, {
-            [controlName]: updateObject( controls[controlName], {
-                value: event.target.value,
-                })
-            });
-            setControls(updatedControls);
-        };
+    // const inputChangedHandler = ( event, controlName ) => {
+    //     const updatedControls = updateObject( controls, {
+    //         [controlName]: updateObject( controls[controlName], {
+    //             value: event.target.value,
+    //             })
+    //         });
+    //         setControls(updatedControls);
+    //     };
 
-    const submitHandler = ( event ) => {
-        event.preventDefault();
-        console.log('submitHandler - productsController');
+    // const submitHandler = ( event ) => {
+    //     event.preventDefault();
+    //     console.log('submitHandler - productsController');
         
-    };
+    // };
         
 
     // const formElementsArray = [];
@@ -124,18 +123,6 @@ const ordersController = React.memo(props => {
         </Card>
 
     ));
-
-    if ( props.loading ) {
-        form = <Spinner />
-    }
-
-    let errorMessage = null;
-
-    if ( props.error ) {
-        errorMessage = (
-            <p>{props.error.message}</p>
-        );
-    }
 
     return(
         <div className="container">

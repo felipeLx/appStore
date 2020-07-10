@@ -1,25 +1,23 @@
 // product that will be render in the scream
 import React, { useState, useEffect } from 'react';
-import { Redirect } from 'react-router-dom';
 import { Card, Button, ButtonGroup } from 'react-bootstrap';
 
 import api from '../../api/index';
 import Aux from '../../hoc/Aux/Aux';
 import classes from './Product.module.css';
 
-
-
 const product = React.memo(props => {
     const [product, setProduct] = useState({});
     const [orderQuantity, setOrderQuantity] = useState(0);
 
+    const productId = props.match.params.id;
     useEffect(() => {
-        api.getOneProduct(props.match.params.id)
+        api.getOneProduct(productId)
                 .then(product => {
                     setProduct(product.data);
                 })
                 .catch(err => console.log(err));
-    }, []);
+    }, [productId]);
 
     const addHandler = () => {
         let quantity = orderQuantity + 1;

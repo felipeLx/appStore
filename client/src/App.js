@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -6,7 +6,7 @@ import Layout from './hoc/Layout/Layout';
 import ProductsBuilder from './containers/Products/ProductsBuilder';
 import Logout from './containers/Auth/Logout/Logout';
 import Product from './components/Product/Product';
-import * as actions from './store/actions/index';
+// import * as actions from './store/actions/index';
 
 const Dashboard = React.lazy(() => {
   return import('./containers/Dashboard/Dashboard');
@@ -28,8 +28,8 @@ const Orders = React.lazy(() => {
   return import('./containers/Orders/Orders');
 });
 
-const Auth = React.lazy(() => {
-  return import('./containers/Auth/Auth');
+const Signup = React.lazy(() => {
+  return import('./containers/Auth/Signup');
 });
 
 const Login = React.lazy(() => {
@@ -37,38 +37,37 @@ const Login = React.lazy(() => {
 });
 
 const app = React.memo(props => {
-  const { onTryAutoSignup, onTryEdit } = props;
+  // const { onTryAutoSignup } = props;
 
-  useEffect(() => {
-    onTryAutoSignup();
-    
-  }, [onTryAutoSignup]);
-
+  // useEffect(() => {
+  //   onTryAutoSignup();
+  // }, [onTryAutoSignup]);
+  
   let routes = (
-    <Switch>
-      <Route path="/user/auth" render={props => <Auth {...props} />} />
-      <Route path="/user/login" render={props => <Login {...props} />} />
-      <Route path='/api/:id' render={props => <Product {...props} />} />
-      <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
-      
-    </Switch>
+      <Switch>
+        <Route path="/user/signup" render={props => <Signup {...props} />} />
+        <Route path="/user/login" render={props => <Login {...props} />} />
+        <Route path='/api/:id' render={props => <Product {...props} />} />
+        <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
+        <Route path="/dashboard" component={Dashboard} />
+        <Route path="/dashboard/products" render={props => <ProductsController {...props} />} />
+        <Route path="/dashboard/user" render={props => <UsersController {...props} />} />
+        <Route path="/dashboard/orders" render={props => <OrdersController {...props} />} />
+      </Switch>
   );
 
   if(props.isAuthenticated) {
     routes = ( 
       <Switch>
-      <Route path='/api/:id' exact component={Product} />
-      <Route path="/dashboard" render={props => <Dashboard {...props} />} />
-      <Route path="/dashboard/products" render={props => <ProductsController {...props} />} />
-      <Route path="/dashboard/users" render={props => <UsersController {...props} />} />
-      <Route path="/dashboard/orders" render={props => <OrdersController {...props} />} />
-      <Route path="/orders" render={props => <Orders {...props} />} />
-      <Route path="/user/logout" component={Logout} />
-      <Route path="/user/auth" render={props => <Auth {...props} />} />
-      <Route path="/user/login" render={props => <Login {...props} />} />
-      <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
-      <Redirect to="/" />
-    </Switch>
+          <Route path='/api/:id' exact component={Product} />
+          <Route path="/dashboard" render={props => <Dashboard {...props} />} />
+          <Route path="/orders" render={props => <Orders {...props} />} />
+          <Route path="/user/logout" component={Logout} />
+          <Route path="/user/signup" render={props => <Signup {...props} />} />
+          <Route path="/user/login" render={props => <Login {...props} />} />
+          <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
+          <Redirect to="/" />
+        </Switch>
     );
   }
 
@@ -94,16 +93,14 @@ const app = React.memo(props => {
 
 const mapStateToProps = state => {
   return {
-  isAuthenticated: state.auth.token !== null,
-  // isAdmin: state.auth.isAdmin !== null
+    isAuthenticated: state.auth.token !== null
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return{
-  onTryAutoSignup: () => dispatch(actions.authCheckState()),
-  // onTryEdit: () => dispatch(actions.adminCheckState())
-  };
-};
+// const mapDispatchToProps = dispatch => {
+//   return{
+//     onTryAutoSignup: () => dispatch(actions.authCheckState())
+//   };
+// };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps) (app));
+export default withRouter(connect(mapStateToProps) (app));

@@ -10,15 +10,12 @@ const navigationItems = (props) => (
         {props.isAuthenticated 
             ? <NavigationItem link="/order">Pedidos</NavigationItem>
             : null }
-        {!props.isAuthenticated 
-            ? <NavigationItem link="/user/auth">Registro</NavigationItem>
-            : <NavigationItem link="/user/logout">Logout</NavigationItem>}
-        {!props.isAuthenticated 
-            ? <NavigationItem link="/user/login">Login</NavigationItem>
-            : null}
         {props.isAuthenticated 
             ? <NavigationItem link="/dashboard">Dashboard</NavigationItem>
             : null}
+        {!props.isAuthenticated 
+            ? <NavigationItem link="/user/login">Login</NavigationItem>
+            : <NavigationItem link="/user/logout">Logout</NavigationItem>}
     </ul>
     
 );
