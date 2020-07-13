@@ -4,7 +4,7 @@ import { updateObject } from '../../shared/utility';
 const initialState = {
     orders: [],
     loading: false,
-    purchased: false
+    purchased: false,
 };
 
 const purchaseInit = ( state, action ) => {
@@ -16,7 +16,7 @@ const purchaseProductStart = ( state, action ) => {
 };
 
 const purchaseProductSuccess = ( state, action ) => {
-    const newOrder = updateObject( action.orderData, { id: action.orderId } );
+    const newOrder = updateObject( action.orderData, { id: action._id } );
     return updateObject( state, {
         loading: false,
         purchased: true,

@@ -6,11 +6,19 @@ export const authStart = () => {
     };
 };
 
-export const authSuccess = (token, userId) => {
+export const adminSuccess = (token,id) => {
+    return {
+        type: actionTypes.ADMIN_SUCCESS,
+        token: token,
+        userId: id
+    };
+};
+
+export const authSuccess =  (token, id) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
-        idToken: token,
-        userId: userId
+        token: token,
+        userId: id
     };
 };
 
@@ -38,12 +46,11 @@ export const checkAuthTimeout = (expirationTime) => {
     }
 };
 
-export const auth = (email, password, isSignUp) => {
+export const login = (email, password) => {
     return {
         type: actionTypes.AUTH_USER,
-        email,
-        password,
-        isSignUp
+        email: email,
+        password: password,
     };
 };
 
@@ -56,23 +63,30 @@ export const authCheckState = () => {
 export const signup = (username, email, password) => {
     return {
         type: actionTypes.SIGNUP_USER,
-        username,
-        email,
-        password
+        username: username,
+        email: email,
+        password: password
     }
 };
 
-export const signupStart = (user) => {
+export const setSignupRedirectPath = (path) => {
     return {
-        type: actionTypes.SIGNUP_START,
-        user
+        type: actionTypes.SET_SIGNUP_REDIRECT_PATH,
+        path: path
+    }
+};
+
+export const signupStart = () => {
+    return {
+        type: actionTypes.SIGNUP_START
     };
 };
 
-export const signupSuccess = (user) => {
+export const signupSuccess = (token, id) => {
     return {
         type: actionTypes.SIGNUP_SUCCESS,
-        user
+        token: token,
+        userId: id
     };
 };
 

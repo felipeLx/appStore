@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
+import Spinner from '../../components/UI/Spinner/Spinner';
 import { updateObject, checkValidity } from '../../shared/utility';
 import * as actions from '../../store/actions/index';
 
@@ -39,11 +40,13 @@ const login = React.memo(props => {
   }
   });
 
-  const [isSignup] = useState(true);
+  const { buildingProduct, authRedirectPath ,onSetSignupRedirectPath } = props;
 
   useEffect(() => {
-
-  }, []);
+      if ( !buildingProduct && authRedirectPath !== '/' ) {
+        onSetSignupRedirectPath();
+      }
+  }, [buildingProduct, authRedirectPath ,onSetSignupRedirectPath]);
 
   const inputChangedHandler = ( event, controlName ) => {
   const updatedControls = updateObject( controls, {
@@ -56,8 +59,21 @@ const login = React.memo(props => {
       setControls(updatedControls);
   };
 
-  const submitHandler = () => {
-    props.onAuth(controls.email.value,controls.password.value,isSignup);
+  const submitHandler = async(event) => {
+    event.preventDefault();
+      try {
+        const response = await props.onLogin( controls.email.value, controls.password.value );
+        console.log(response);
+          if(!response) {
+            console.log('no fetch data');
+          } else {
+            const expirationDate = new Date().getTime();
+            localStorage.setItem('token', response._id);
+            localStorage.setItem('expirationDate', expirationDate);
+            localStorage.setItem('userId', response.email);}
+      } catch(err) {
+        console.log(err);
+      }
   };
 
   const formElementsArray = [];
@@ -80,12 +96,28 @@ const login = React.memo(props => {
           changed={( event ) => inputChangedHandler( event, formElement.id )} />
   ));
 
-  if(props.isAuthenticated) {
-    return <Redirect to='/' />
+  if ( props.loading ) {
+    form = <Spinner />
+  }
+
+  let errorMessage = null;
+
+  if ( props.error ) {
+      errorMessage = (
+          <p>{props.error.message}</p>
+      );
+  }
+
+  let authRedirect = null;
+  if ( props.isAuthenticated || props.isAdmin ) {
+      authRedirect = <Redirect to='/' />
   }
 
   return (
     <div className="container">
+      {authRedirect}
+      {errorMessage}
+
     <div style={{ marginTop: "4rem", paddingTop: "70px" }} className="row">
       <div className="col s8 offset-s2">
         <Link to="/" className="btn-flat waves-effect">
@@ -99,9 +131,9 @@ const login = React.memo(props => {
             Ainda não tem uma conta? <Link to="/user/signup">Registrar</Link>
           </p>
         </div>
-        <form onSubmit={submitHandler}>
+        <form action="POST" onSubmit={submitHandler}>
           {form}
-          <Button btnType="Success">ENVIAR</Button>
+          <Button type='submit' btnType="Success">ENVIAR</Button>
         </form>
       </div>
     </div>
@@ -113,15 +145,17 @@ const mapStateToProps = state => {
   return {
       loading: state.auth.loading,
       error: state.auth.error,
-      isAuthenticated: state.auth.token !== null,
-      buildingProduct: state.productBuilder.building
+      isAuthenticated: state.auth.token !== null || state.signup.token !== null,
+      isAdmin: state.auth.isAdmin,
+      buildingProduct: state.productBuilder.building,
+      authRedirectPath: state.signup.signupRedirectPath
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-      onAuth: ( email, password, isSignup ) => dispatch( actions.auth( email, password, isSignup ) ),
-      onLogout: () => dispatch( actions.logout() ),
+      onLogin: ( email, password ) => dispatch( actions.login( email, password ) ),
+      onSetSignupRedirectPath: () => dispatch( actions.setSignupRedirectPath( '/' ) )
   };
 };
 

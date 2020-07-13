@@ -10,17 +10,14 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
-const flash = require('connect-flash');
 const indexRoute = require('./routes/index');
 const productsRoute = require('./routes/products');
 const ordersRoute = require('./routes/orders');
 const dashboardRoute = require('./routes/dashboard');
 const usersRoute = require('./routes/users');
-require("babel-core/register");
-require("babel-polyfill");
 
-// Passport config
-// require('./config/passport')(passport);
+require('./models/user.model');
+require('./passport');
 
 const app = express();
 
@@ -30,7 +27,7 @@ app.use(bodyParser.json())
 app.use(multer({ dest: './uploads/'}).single('profile'));
 if(process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));  
-  app.get('*', (req,res) => {
+  app.get('/', (req,res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
 } else {
@@ -45,33 +42,21 @@ if(process.env.NODE_ENV === 'production') {
       saveUninitialized: true
     })
   );
+  
+//Routes
+app.use('/api', productsRoute);
+app.use('/user', usersRoute);
+app.use('/order', ordersRoute);
+app.use('/dashboard', dashboardRoute);
+app.use('/', indexRoute);
 
-  
-  
+
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Connect flash
-app.use(flash());
-
-// Global variables
-app.use(function(req, res, next) {
-  res.locals.success_msg = req.flash('success_msg');
-  res.locals.error_msg = req.flash('error_msg');
-  res.locals.error = req.flash('error');
-  next();
-});
-
-//Routes
-app.use('/api/', productsRoute);
-app.use('/user/', usersRoute);
-app.use('/order/', ordersRoute);
-app.use('/dashboard/', dashboardRoute);
-app.use('/', indexRoute);
-
 //Get the default connection
-let db = mongoose.connect(process.env.MONGODB_URI, {
+let db = mongoose.connect('mongodb+srv://felipealisboa:Universidade.2010@cluster0-fqbok.mongodb.net/storeDB', {
   useUnifiedTopology: true,
   useNewUrlParser: true
 })
@@ -82,7 +67,6 @@ console.log("DB Connected");
   console.log(`DB Connection Error: ${err.message}`);
 });
 
+const PORT = process.env.PORT || 5000; // process.env.port is Heroku's port if you choose to deploy the app there
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, console.log(`Server start on port: ${PORT}`));
+app.listen(PORT, console.log(`Server start on port: ${PORT}`)); 

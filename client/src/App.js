@@ -8,9 +8,14 @@ import Logout from './containers/Auth/Logout/Logout';
 import Product from './components/Product/Product';
 import * as actions from './store/actions/index';
 
-const Dashboard = React.lazy(() => {
-  return import('./containers/Dashboard/Dashboard');
+const AdminDashboard = React.lazy(() => {
+  return import('./containers/Dashboard/AdminDashboard');
 });
+
+const UserDashboard = React.lazy(() => {
+  return import('./containers/Dashboard/UserDashboard');
+});
+
 
 const ProductsController = React.lazy(() => {
   return import('./components/Controller/Products/ProductsController');
@@ -23,6 +28,15 @@ const OrdersController = React.lazy(() => {
 const UsersController = React.lazy(() => {
   return import('./components/Controller/Users/UsersController');
 });
+
+const OrderController = React.lazy(() => {
+  return import('./components/Controller/Orders/OrderController');
+});
+
+const UserController = React.lazy(() => {
+  return import('./components/Controller/Users/UserController');
+});
+
 
 const Orders = React.lazy(() => {
   return import('./containers/Orders/Orders');
@@ -49,24 +63,35 @@ const app = React.memo(props => {
           <Route path="/user/login" render={props => <Login {...props} />} />
           <Route path='/api/:id' render={props => <Product {...props} />} />
           <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/dashboard/products" render={props => <ProductsController {...props} />} />
-          <Route path="/dashboard/user" render={props => <UsersController {...props} />} />
-          <Route path="/dashboard/orders" render={props => <OrdersController {...props} />} />
+          <Redirect to="/" />
       </Switch>
   );
 
-  if(props.isAuthenticated) {
+  if(props.isAuthenticated && !props.isAdmin) {
     routes = ( 
       <Switch>
           <Route path='/api/:id' exact component={Product} />
-          <Route path="/dashboard" render={props => <Dashboard {...props} />} />
-          <Route path="/orders" render={props => <Orders {...props} />} />
+          <Route path="/dashboard" render={props => <UserDashboard {...props} />} />
+          <Route path="/dashboard/user" render={props => <UserController {...props} />} />
+          <Route path="/dashboard/orders" render={props => <OrderController {...props} />} />
           <Route path="/user/logout" component={Logout} />
-          <Route path="/user/signup" render={props => <Signup {...props} />} />
-          <Route path="/user/login" render={props => <Login {...props} />} />
           <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
           <Redirect to="/" />
+      </Switch>
+    );
+  }
+
+  if(props.isAdmin) {
+    routes = ( 
+      <Switch>
+          <Route path='/api/:id' exact component={Product} />
+          <Route path="/" exact render={props => <ProductsBuilder {...props} />} />
+          <Route path="/user/logout" component={Logout} />
+          <Route path='/dashboard' render={props => <AdminDashboard {...props} />} />
+          <Route path="/dashboard/products" render={props => <ProductsController {...props} />} />
+          <Route path="/dashboard/user" render={props => <UsersController {...props} />} />
+          <Route path="/dashboard/orders" render={props => <OrdersController {...props} />} />
+          <Redirect to="/dashboard" />
       </Switch>
     );
   }
@@ -93,7 +118,8 @@ const app = React.memo(props => {
 
 const mapStateToProps = state => {
   return {
-    isAuthenticated: state.auth.token !== null
+    isAuthenticated: state.signup.token !== null || state.auth.token !== null,
+    isAdmin: state.auth.isAdmin
   };
 };
 

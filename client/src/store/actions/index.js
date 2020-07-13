@@ -17,9 +17,10 @@ export {
     fetchOrdersStart
 } from './order';
 export {
-    auth,
+    login,
     logout,
     authCheckState,
+    setSignupRedirectPath,
     logoutSucceed,
     authStart,
     authSuccess,
@@ -28,5 +29,6 @@ export {
     signup,
     signupStart,
     signupSuccess,
-    signupFail
+    signupFail,
+    adminSuccess
 } from './auth';

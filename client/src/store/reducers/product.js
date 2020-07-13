@@ -2,14 +2,10 @@ import * as actionTypes from '../actions/actionTypes';
 import { updateObject } from '../../shared/utility';
 
 const initialState = {
-    products: null,
+    products: [],
     totalPrice: 0,
     error: false,
     building: false
-};
-
-const PRODUCTS_PRICES = {
-     borracha: 0.5
 };
 
 const addProduct = ( state, action ) => {
@@ -17,7 +13,7 @@ const addProduct = ( state, action ) => {
     const updatedProducts = updateObject( state.products, updatedProduct );
     const updatedState = {
         products: updatedProducts,
-        totalPrice: state.totalPrice + PRODUCTS_PRICES[action.productName],
+        totalPrice: state.totalPrice + state.products.price[action.productName],
         building: true
     }
     return updateObject( state, updatedState );
@@ -26,23 +22,23 @@ const addProduct = ( state, action ) => {
 const removeProduct = (state, action) => {
     const updatedProd = { [action.productName]: state.products[action.productName] - 1 }
     const updatedProds = updateObject( state.products, updatedProd );
-    const updatedSt = {
+    const updatedState = {
         products: updatedProds,
-        totalPrice: state.totalPrice - PRODUCTS_PRICES[action.productName],
+        totalPrice: state.totalPrice - state.products.price[action.productName],
         building: true
     }
-    return updateObject( state, updatedSt );
+    return updateObject( state, updatedState );
 };
 
 const setProducts = (state, action) => {
     return updateObject( state, {
         products: {
-            borracha: action.products.borracha
+            products: action.products
         },
         totalPrice: 0,
         error: false,
         building: false
-    } );
+    });
 };
 
 const fetchProductsFailed = (state, action) => {

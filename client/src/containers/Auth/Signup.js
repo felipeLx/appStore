@@ -1,4 +1,4 @@
-import React, { useState,  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Redirect } from "react-router-dom";
 import { connect } from 'react-redux';
 
@@ -56,6 +56,13 @@ const signup = React.memo(props => {
   });
 
   
+  const { buildingProduct, authRedirectPath ,onSetSignupRedirectPath } = props;
+
+  useEffect(() => {
+      if ( !buildingProduct && authRedirectPath !== '/' ) {
+        onSetSignupRedirectPath();
+      }
+  }, [buildingProduct, authRedirectPath ,onSetSignupRedirectPath]);
 
   const inputChangedHandler = ( event, controlName ) => {
   const updatedControls = updateObject( controls, {
@@ -75,9 +82,16 @@ const signup = React.memo(props => {
     } else {setControls(updatedControls);}
   };
 
-  const submitHandler = ( event ) => {
-  event.preventDefault();
-  props.onRegister( controls.username.value, controls.email.value, controls.password.valuer );
+  const submitHandler = async( event ) => {
+    event.preventDefault();
+    const response = await props.onAuth(controls.username.value, controls.email.value, controls.password.value);
+    if(!response) {
+      console.log('no fetch data');
+    } else {
+      const expirationDate = new Date().getTime();
+      localStorage.setItem('token', response._id);
+      localStorage.setItem('expirationDate', expirationDate);
+      localStorage.setItem('userId', response.email);}
   };
 
   const formElementsArray = [];
@@ -104,12 +118,23 @@ const signup = React.memo(props => {
       form = <Spinner />
   }
 
+  let errorMessage = null;
+
+  if ( props.error ) {
+      errorMessage = (
+          <p>{props.error.message}</p>
+      );
+  }
+
+  let authRedirect = null;
   if ( props.isAuthenticated ) {
-      return <Redirect to="/" />
+      authRedirect = <Redirect to='/' />
   }
 
   return (
     <div className="container">
+      {authRedirect}
+      {errorMessage}
       <div style={{ marginTop: "4rem", paddingTop: "70px" }} className="row">
         <div className="col s8 offset-s2">
           <Link to="/" className="btn-flat waves-effect">
@@ -123,9 +148,9 @@ const signup = React.memo(props => {
               Já tem uma conta? <Link to="/user/login">Login</Link>
             </p>
           </div>
-              <form onSubmit={submitHandler}>
+              <form action="POST" onSubmit={submitHandler}>
                 {form}
-                <Button btnType="Success">ENVIAR</Button>
+                <Button type='submit' btnType="Success">ENVIAR</Button>
               </form>
         </div>
       </div>
@@ -135,15 +160,18 @@ const signup = React.memo(props => {
 
 const mapStateToProps = state => {
   return {
-      loading: state.auth.loading,
-      error: state.auth.error,
-      isAuthenticated: state.auth.token !== null,
+      loading: state.signup.loading,
+      error: state.signup.error,
+      isAuthenticated: state.signup.token !== null,
+      buildingProduct: state.productBuilder.building,
+      authRedirectPath: state.signup.signupRedirectPath
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-      onRegister: ( username, email, password ) => dispatch( actions.signup( username, email, password ) ),
+      onAuth: ( username, email, password ) => dispatch( actions.signup( username, email, password ) ),
+      onSetSignupRedirectPath: () => dispatch( actions.setSignupRedirectPath( '/' ) )
   };
 };
 

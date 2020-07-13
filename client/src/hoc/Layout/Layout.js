@@ -20,10 +20,12 @@ const layout = React.memo(props => {
         return (
             <Aux>
                 <Toolbar
-                    isAuth={props.isAuthenticated} 
+                    isAuth={props.isAuthenticated}
+                    isAdmin={props.isAdmin} 
                     drawerToggleClicked={sideDrawerToggleHandler} />
                 <SideDrawer
                     isAuth={props.isAuthenticated} 
+                    isAdmin={props.isAdmin} 
                     open={showSideDrawer}
                     closed={sideDrawerClosedHandler} />
                 <main className={classes.Content}>
@@ -35,7 +37,8 @@ const layout = React.memo(props => {
 
 const mapStateToProps = state => {
     return {
-        isAuthenticated: state.auth.token !== null
+        isAuthenticated: state.signup.token !== null || state.auth.token !== null,
+        isAdmin: state.auth.isAdmin
     };
 };
 

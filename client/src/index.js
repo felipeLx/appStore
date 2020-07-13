@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import registerServiceWorker from './registerServiceWorker';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
@@ -8,17 +9,17 @@ import createSagaMiddleware from 'redux-saga';
 
 import './index.css';
 import App from './App';
-import productBuilderReducer from './store/reducers/product';
+import productReducer from './store/reducers/product';
 import orderReducer from './store/reducers/order';
 import authReducer from './store/reducers/auth';
 import signupReducer from './store/reducers/signup';
 
-import {watchAuth, watchProductBuilder, watchOrder } from './store/sagas';
+import {watchAuth, watchProduct, watchOrder } from './store/sagas';
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
 const rootReducer = combineReducers({
-    productBuilder: productBuilderReducer,
+    product: productReducer,
     order: orderReducer,
     auth: authReducer,
     signup: signupReducer,
@@ -31,7 +32,7 @@ const store = createStore(rootReducer, composeEnhancers(
 ));
 
 sagaMiddleware.run(watchAuth);
-sagaMiddleware.run(watchProductBuilder);
+sagaMiddleware.run(watchProduct);
 sagaMiddleware.run(watchOrder);
 
 const app = (
@@ -46,3 +47,4 @@ ReactDOM.render(
   app,
   document.getElementById('root')
 );
+registerServiceWorker();

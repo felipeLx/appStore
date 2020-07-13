@@ -15,7 +15,7 @@ export function* watchAuth() {
     ]);
 }
 
-export function* watchProductBuilder() {
+export function* watchProduct() {
     yield takeEvery(actionType.INIT_PRODUCTS, initProductsSaga);
 }
 

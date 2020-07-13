@@ -1,16 +1,23 @@
-const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const User = require('../models/user.model');
-// const { forwardAuthenticated, ensureAuthenticated } = require('../config/signup');
-// const { passportAuth } = require('../config/passport');
 
-// router.route('/user/login', forwardAuthenticated).get((req, res) => res.redirect('/'));
-// router.route('/user/login', ensureAuthenticated).get((req, res) => res.redirect('/'));
-// router.route('/user/login', passportAuth).get((req, res) => res.redirect('/'));
+passport.use(User.createStrategy());
+
+passport.serializeUser(function(user, done) {
+  done(null, user._id);
+});
+
+passport.deserializeUser(function(id, done) {
+  userId = mongoose.Schema.ObjectId(id);
+  User.findById(userId, function(err, user) {
+    done(err, user);
+  });
+});
 
 router.route('/').get(async(req,res) => {
     
@@ -34,14 +41,14 @@ router.route('/login').post(async(req,res) => {
 
     const {email, password} = req.body;
     
-    await User.findOne({email: email})
+    await User.findOne({email: email, password: password})
         .then((user) => {
                 passport.authenticate('local')(req, res,() => {
                         res.status(200).send(user);
                 });
         })
         .catch(err => {
-            console.log(err);
+            console.log(`No posible to login: ${err}`);
             res.redirect('/user/signup');
         });
     
@@ -58,7 +65,6 @@ router.route('/signup').post(async(req, res) => {
     if(!req.body) {
         return res.status(500).send('Informar todos os campos antes de enviar');
     }
-    console.log(req.body);
     
     const {username, email, password} = req.body;
     let errors = [];

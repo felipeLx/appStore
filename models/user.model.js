@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 const userSchema = new mongoose.Schema({
     username: {type: String, require: true, lowercase: true},
-    email: {type: String, require: true, lowercase: true},
+    email: {type: String, require: true, lowercase: true, index: {unique: true}},
     password: {type: String, require: true},
     orderId: {type: [String], require: false},
     dataCreate: {type: Date, default: Date.now(), require: true},
@@ -23,13 +23,15 @@ userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
 mongoose.set("useCreateIndex", true);
 
+
+
 const User = new mongoose.model("User", userSchema);
 
-passport.use(User.createStrategy());
+
 passport.use(new GoogleStrategy({
-    clientID: process.env.CLIENT_ID,
-    clientSecret: process.env.SECRET,
-    callbackURL: "http://localhost:3000/auth/google/appstore",
+    clientID: '337624496879-ucdmgd6jmp1j07gba4q2vog74hmf0ts4.apps.googleusercontent.com',
+    clientSecret: 'dYJDofNuW56nGdli7oAdPPoR',
+    callbackURL: "https://alvestore.herokuapp.com/user/auth/google/appstore",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   (accessToken, refreshToken, profile, cb) => {
