@@ -1,110 +1,84 @@
-const mongoose = require('mongoose');
+const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const User = require('../models/user.model');
-
-passport.use(User.createStrategy());
-
-passport.serializeUser(function(user, done) {
-  done(null, user._id);
-});
-
-passport.deserializeUser(function(id, done) {
-  userId = mongoose.Schema.ObjectId(id);
-  User.findById(userId, function(err, user) {
-    done(err, user);
-  });
-});
 
 router.route('/').get(async(req,res) => {
     
     await User.find({}, (err, users) => {
         if(users.length === 0) {
-            res.status(200).send('Good request, but don`t have data to show');
+            return res.status(200).send('Good request, but don`t have data to show');
         } else if(err) {
-            res.status(404).send(err);
+            return res.status(404).send(err);
         } else {
-            res.status(200).send(users);
+            return res.status(200).send(users);
         }
     })
 });
 
 // Login
 router.route('/login').post(async(req,res) => {
-    if(!req.body) {
-        res.status('400').send('Preencher os campos obriatórios antes de enviar!');
-        return;
-    }
+    const { email, password } = req.body;
 
-    const {email, password} = req.body;
-    
-    await User.findOne({email: email, password: password})
-        .then((user) => {
-                passport.authenticate('local')(req, res,() => {
-                        res.status(200).send(user);
-                });
-        })
-        .catch(err => {
-            console.log(`No posible to login: ${err}`);
-            res.redirect('/user/signup');
+    try{ 
+        let user = await User.findOne({email: email, password: password}, (err, userMatch) => {
+            console.log(userMatch);
+            if(!userMatch) {
+                return res.json({msg: 'user not found!'});
+            } else {
+                return res.status(200).send(userMatch);
+            }
         });
-    
+        console.log(user);
+        console.log(userMatch);
+    } catch (err) {
+        return res.json({msg: 'not posible to login!'});
+    }
 });
 
 // Logout
-router.route('/logout').post(async(req,res) => {
-    req.logout();
-    res.status(200).redirect('/');
-})
+router.route('/logout').post((req,res) => {
+    if (req.params) {
+		req.session.destroy();
+		res.clearCookie('connect.sid') // clean up!
+		return res.json({ msg: 'logging you out' })
+	} else {
+		return res.json({ msg: 'no user to log out!' })
+	}
+});
 
 // Register
 router.route('/signup').post(async(req, res) => {
-    if(!req.body) {
-        return res.status(500).send('Informar todos os campos antes de enviar');
-    }
-    
-    const {username, email, password} = req.body;
-    let errors = [];
-
-    if (!username || !email || !password) {
-        errors.push({ msg: 'Please enter all fields' });
-      }
-      if (errors.length > 0) {
-        res.send('Error to access');
-      } else {
-        User.findOne({ email: email, username: username }).then(user => {
-          if (user) {
-            errors.push({ msg: 'Email already exists' });
-            res.status(400).send('Email already exists');
-          } else {
-            const newUser = new User({
-              username,
-              email,
-              password
-            });
-    
-            bcrypt.genSalt(10, (err, salt) => {
-              bcrypt.hash(newUser.password, salt, (err, hash) => {
-                if (err) {throw err;}
-                newUser.password = hash;
-                newUser
-                  .save()
-                  .then(user => {
-                      console.log(res)
-                    res.status(200).send(user)
-                  })
-                  .catch(err => console.log(err));
-              });
-            });
-          }
-        });
-      }
+    const { username, email, password } = req.body
+	// ADD VALIDATION
+	let user = await User.findOne({ username: username }, (err, userMatch) => {
+		if (userMatch) {
+			return res.json({
+				error: "Sorry, already a user with the username: " + username
+			});
+        }
+    }); 
+    user = await User.findOne({ email: email }, (err, userMatch) => {
+		if (userMatch) {
+			return res.json({
+				error: "Email already registered!"
+			});
+        }
+    }); 
+    user = new User({
+        username: username,
+        email: email,
+        password: password
     });
+            // const salt = bcrypt.genSalt(10);
+            // user.password = bcrypt.hash(user.password, salt);
+    user.save();
+    return res.status(200).send(user);
+});  
     
-
 router.route('/:id').get(async(req,res, next) => {
     console.log(req.params);
     
@@ -112,15 +86,18 @@ router.route('/:id').get(async(req,res, next) => {
         res.status(500).send('Id do usuário não informado');
     }
 
-    await User.findById(req.params.id, (err, user) => {
+    try {
+        const user = await User.findById(req.params.id, (err, user) => {
         if(err) {
             return next(err);
         } else if(!user) {
-            return res.status(404).send('user não encontrado')
+            return res.status(400).send('user não encontrado');
         } else {
-            return res.status(200).send(user);
+            return res.json(user);
         }
-    })
+    })} catch(err) {
+        return res.status(404).send('was not possible to fetch data from the database');
+    }
 });
 
 

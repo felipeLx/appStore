@@ -5,61 +5,56 @@ const Product = require('../models/product.model');
 
 router.route('/').get(async(req,res) => {
     
-    await Product.find({}, (err, products) => {
+    try {
+        const products = await Product.find({}, (err, products) => {
         if(products.length === 0) {
-            res.status(200).send('Good request, but don`t have data to show');
+            return res.json('Good request, but don`t have data to show');
         } else if(err) {
-            res.status(404).send(err);
+            res.json('Not possible to access your data in the database, verify the request! ' + err);
         } else {
-            res.status(200).send(products);
+            return res.json(products);
         }
-    })
+    })} catch(err) {
+        return res.json('Not possible to access the database ' + err);
+    }
 });
 
 router.route('/').post(async(req,res) => {
     
-    if(!req.body) {
-        res.status('400').send('Preencher os campos obriatórios antes de enviar!');
-        return;
-    }
-    console.log(req.body);
-    
-    let product = new Product(req.body);    
-            await product.save()
-                    .then(prod => {
-                        res.status(200).send(prod);
-                        window.alert('Product save successfully!');
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        res.sendStatus(500);
-                        return;
-                    })   
+    try {
+        let product = await new Product(req.body);    
+            product.save()
+                .then(prod => {
+                    res.status(200).send(prod);
+                    window.alert('Product save successfully!');
+                })
+                .catch((err) => {
+                    res.json('Not possible to access your data in the database, verify the request! ' + err);
+    })} catch(err) {
+                        return res.json('Not possible to access the database ' + err);
+                    }
 });
 
 router.route('/:id').get(async(req,res, next) => {
 
-    if(!req.params.id) {
-        res.status(500).send('Id do produto não informado');
-    }
-
-    await Product.findById(req.params.id, (err, product) => {
-        if(err) {
+    try {
+        const product = await Product.findById(req.params.id, (err, product) => {
+            if(err) {
             return next(err);
-        } else if(!product) {
-            return res.status(404).send('produto não encontrado')
+            } else if(!product) {
+                res.json('Not possible to access your data in the database, verify the request! ' + err);
         } else {
-            return res.status(200).send(product);
+            return res.json(product);
         }
-    })
+    })} catch(err) {
+        return res.json('Not possible to access the database ' + err);
+    }
 });
 
 router.route('/:id').put(async(req,res, next) => {
-    if(!req.params.id) {
-        return res.status(500).send('ID do producto não encontrado na base de dados');
-    }
-    
-    await Product.findByIdAndUpdate(req.params.id, req.body, (err, product) => {
+
+    try {
+        await Product.findByIdAndUpdate(req.params.id, req.body, (err, product) => {
         if(err) {
             return res.status(500).send('Product not found in Database');
         } else if(!product) {
@@ -67,25 +62,28 @@ router.route('/:id').put(async(req,res, next) => {
         }else {
             product.save()
                     .then(prod => {
-                        res.status(200).send(prod);
+                        return res.json(prod);
                     })
                     .catch(err => {
                         next(err);
                     }) 
-    }})   
+    }}) } catch(err) {
+        return res.json('Not possible to access the database ' + err);
+    }
 });
 
 router.route('/:id').delete(async(req,res) => {
-    if(!req.body) {
-        return res.status(500).send('Not data informed!')
-    }
-    await Product.findByIdAndRemove(req.params.id, req.body, (err, user) => {
+   
+    try {
+        await Product.findByIdAndRemove(req.params.id, req.body, (err, user) => {
         if(err) {
-            return res.status(404).send('Product not found in Database');
+            return res.json('Product not found in Database');
         } else {
-            return res.status(200).send('Product deleted sucessfully!');
+            return res.json('Product deleted sucessfully!');
         }
-    })
+    })} catch(err)  {
+        return res.json('Not possible to access the database ' + err);
+    }
 });
 
 router.post('/photo',(req,res) => {
