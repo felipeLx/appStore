@@ -1,27 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { NavLink } from 'react-router-dom';
-import {Card, Button} from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 
 import Product from '../../components/Product/Product';
 import BuildControls from '../../components/Product/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Product/OrderSummary/OrderSummary';
-import Spinner from '../../components/UI/Spinner/Spinner';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import * as actions from '../../store/actions/index';
-import axios from 'axios';
+// import Spinner from '../../components/UI/Spinner/Spinner';
+import * as actions from '../../store/actions';
 import Aux from '../../hoc/Aux/Aux';
-
-const api = axios.create({
-    baseURL: '/'
-});
+import api from '../../api';
 
 const ProductsBuilder = props => {
 
-    const [purchasing, setPutchasing] = useState(false)
-    // const [productsList, setProductsList] = useState([]);
-    // const [orderQuantity, setOrderQuantity] = useState(0);
+    const [products, setProducts] = useState([]);
+    const [purchasing, setPutchasing] = useState(false);
+    const [quantity, setQuantity] = useState(0);
 
     useEffect(() => {
         getAllProducts();
@@ -29,23 +23,23 @@ const ProductsBuilder = props => {
 
     const getAllProducts = async() => {
         try {
-            const products = await props.onInitProducts();
+            await api.getAllProducts()
+                .then(prds => setProducts(prds.data) );
         } catch(err) {
-            console.log('Error to fetch the data from the front-end component: ' + err);
+            console.log('Error to fetch the data in the front-end component: ' + err);
         }
     };
 
-    console.log(props.prds);
-    const updatePurchaseState = ( products ) => {
-        const sum = Object.keys( products )
-            .map( igKey => {
-                return products[igKey];
-            } )
-            .reduce( ( sum, el ) => {
-                return sum + el;
-            }, 0 );
-        return sum > 0;
-    };
+    // const updatePurchaseState = ( products ) => {
+    //     const sum = Object.keys( products )
+    //         .map( igKey => {
+    //             return products[igKey];
+    //         } )
+    //         .reduce( ( sum, el ) => {
+    //             return sum + el;
+    //         }, 0 );
+    //     return sum > 0;
+    // };
 
     const purchaseHandler = () => {
         if(props.isAuthenticated) {
@@ -64,116 +58,88 @@ const ProductsBuilder = props => {
         props.onInitPurchase();
         props.history.push('/checkout');
     };
-    
-    const disabledInfo = {
-        ...props.prds
-    };
-    for ( let key in disabledInfo ) {
-        disabledInfo[key] = disabledInfo[key] <= 0
-    }
-    let orderSummary = null;
-    let product = props.error ? <p>Products can't be loaded!</p> : <Spinner />;
 
-    if ( props.prds ) {
-        product = (
-            <Aux>
-                <Product products={props.prds} />
-                <BuildControls 
-                    productAdded={props.onProductAdded}
-                    productRemoved={props.onProductRemoved}
-                    disabled={disabledInfo}
-                    purchasable={updatePurchaseState(props.prds)}
-                    isAuth={props.isAuthenticated}
-                    ordered={purchaseHandler}
-                    price={props.price} />
-            </Aux>
-        );
-        orderSummary = <OrderSummary 
-            products={props.prds}
-            price={props.price}
-            purchaseCancelled={purchaseCancelHandler}
-            purchaseContinued={purchaseContinueHandler} />;
+    let productArray = [];
+    let orderSummary = [];
+
+    const productAdd = () => {
+        setQuantity(quantity + 1)
+    };
+
+    const productRemove = () => {
+        setQuantity(quantity -1);
     }
+
+    if ( products.length > 0 ) {
+        products.map(prd => {
+            productArray.push(    
+                 
+                <Card.Body key={prd._id} style={{textAlign: 'center'}}>
+                 
+                <Aux>
+                    <Product 
+                        id={prd._id}
+                        name={prd.name}
+                        brand={prd.brand}
+                        price={prd.price}
+                        description={prd.description}
+                        category={prd.category}
+                        picture={prd.picture}
+                    />
+                    <BuildControls 
+                        productAdded={productAdd}
+                        productRemoved={productRemove}
+                        quantity={quantity}
+                        disabled={prd._id}
+                        name = {prd.name}
+                        purchasable={prd._id}
+                        total={prd.price * quantity}
+                        isAuth={props.isAuthenticated}
+                        ordered={purchaseHandler}
+                    />
+                </Aux>
+                </Card.Body>
+                
+            )
+            
+            orderSummary.push(
+                <div key={prd._id}>
+                <OrderSummary 
+                    products={prd._id}
+                    name={prd.name}
+                    total={prd.price * quantity}
+                    purchaseCancelled={purchaseCancelHandler}
+                    purchaseContinued={purchaseContinueHandler} />;
+                </div>
+            );
+        })
+    };
 
         return (
             <Aux>
                 <Modal show={purchasing} modalClosed={purchaseCancelHandler}>
                     {orderSummary}
                 </Modal>
-                {product}
+                <div className='row row-sm-6'>
+                    {productArray}
+                </div>
             </Aux>
         );
 };
-    
-//     return (
-//         <div>
-//             <Aux>
-//                 <hr />
-//                 <div className="container cards">
-//                     <div className="row">
-//                         return <p>Hello World</p>
-//                         {/* {productsList.map(product => {
-//                             return renderProducts(product); }}) */}
-                    
-//                     </div>
-//                 </div>
-                
-//             </Aux>
-//         </div>
-//     );
-// };
 
 const mapStateToProps = state => {
     return {
-        price: state.product.totalPrice,
         error: state.product.error,
         isAuthenticated: state.auth.token !== null || state.signup.token !== null,
-        prds: state.product.products,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onProductAdded: (prdName) => dispatch(actions.addProduct(prdName)),
-        onProductRemoved: (prdName) => dispatch(actions.removeProduct(prdName)),
         onInitProducts: () => dispatch(actions.initProducts()),
         onInitPurchase:  () => dispatch(actions.purchaseInit()),
         onSetSignupRedirectPath: (path) => dispatch(actions.setSignupRedirectPath(path)),
     };
 };
 
-export default withErrorHandler (connect(mapStateToProps, mapDispatchToProps) (ProductsBuilder), api);
-
-//old code
-{/*
-     <div key={product._id} className="col col-sm-6 col-lg-4 li">
-                 <Card className="card" style={{ width: '18rem' }}>
-                    <Card.Img className="card-img-top" variant="top" src={product.picture} />
-                    <Card.Body className="card-body">
-                        <Card.Title>Produto: {product.product}</Card.Title>
-                        <NavLink to={`/api/${product._id}`} className="btn btn-primary">Detalhe</NavLink>
-                        <hr />
-                        <Card.Text>
-                        Categoria: {product.category}
-                        </Card.Text>
-                        <Card.Text> 
-                        R$ {product.price}
-                        </Card.Text>
-                        <Card.Text>
-                        {/* Quantidade: {orderQuantity} 
-                        </Card.Text>
-                        <BuildControls
-                            productAdded={props.onProductAdded}
-                            productRemoved={props.onProductRemoved}
-                            disabled={disabledInfo}
-                            purchasable={updatePurchaseState(props.prds)}
-                            isAuth={props.isAuthenticated}
-                            ordered={purchaseHandler}
-                            price={props.price} />
-                        <Card.Text>
-                        <Button className="btn btn-info">Adicionar ao pedido</Button>
-                        </Card.Text>
-                    </Card.Body>
-                    </Card>
-            </div> 
-        */}
+export default connect(mapStateToProps, mapDispatchToProps) (ProductsBuilder);

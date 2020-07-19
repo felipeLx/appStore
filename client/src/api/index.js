@@ -12,20 +12,20 @@ export const updateProductById = (id, payload) => api.put(`/api/${id}`, payload)
 export const deleteProductById = id => api.delete(`/api/${id}`);
 
 // Orders
-export const insertOrder = payload => api.post('/order', payload);
-export const getAllOrders = () => api.get('/order');
-export const getOrderById = id => api.get(`/order/${id}`);
-export const updateOrderById = (id, payload) => api.put(`/order/${id}`, payload);
-export const deleteOrderById = id => api.delete(`/order/${id}`);
+export const insertOrder = payload => api.post('/orders', payload);
+export const getAllOrders = () => api.get('/orders');
+export const getOrderById = id => api.get(`/orders/${id}`);
+export const updateOrderById = (id, payload) => api.put(`/orders/${id}`, payload);
+export const deleteOrderById = id => api.delete(`/orders/${id}`);
 
 // Users
-export const registerUser = payload => api.post('/user/signup', payload);
-export const loginUser = payload => api.post('/user/login', payload);
-export const logoutUser = () => api.post('/user/logout');
-export const getAllUsers = () => api.get('/user');
-export const getUserById = id => api.get(`/user/${id}`);
-export const updateUserById = (id, payload) => api.put(`/user/${id}`, payload);
-export const deleteUserById = id => api.delete(`/user/${id}`);
+export const registerUser = payload => api.post('/users/signup', payload);
+export const loginUser = payload => api.post('/users/login', payload);
+export const logoutUser = () => api.post('/users/logout');
+export const getAllUsers = () => api.get('/users');
+export const getUserById = id => api.get(`/users/${id}`);
+export const updateUserById = (id, payload) => api.put(`/users/${id}`, payload);
+export const deleteUserById = id => api.delete(`/users/${id}`);
 
 const apis = {
     insertProduct,

@@ -3,14 +3,15 @@ import axios from 'axios';
 import * as actions from '../actions/index';
 
 const api = axios.create({
-    baseURL: '/order'
+    baseURL: '/orders'
 });
 
 export function* purchaseProductSaga(action) {
-    
     yield put( actions.purchaseProductStart() );
+    console.log(action);
+
     try{
-        const response = yield api.post( '/orders.json?auth=' + action.token, action.orderData )
+        const response = yield api.post( '/', action.orderData )
         //console.log( response.data );
         yield put( actions.purchaseProductSuccess( response.data.name, action.orderData ) );
         } catch(error)  {

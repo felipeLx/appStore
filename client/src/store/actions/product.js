@@ -22,6 +22,13 @@ export const setProducts = ( products ) => {
     };
 };
 
+export const openDetail = ( product ) => {
+    return {
+        type: actionTypes.OPEN_DETAIL,
+        product: product
+    };
+};
+
 export const fetchProductsFailed = () => {
     return {
         type: actionTypes.FETCH_PRODUCTS_FAILED

@@ -1,67 +1,40 @@
 // product that will be render in the scream
-import React, { useState, useEffect } from 'react';
-import { Card, Button, ButtonGroup } from 'react-bootstrap';
+import React from 'react';
+import { Card, Button } from 'react-bootstrap';
 
-import api from '../../api/index';
 import Aux from '../../hoc/Aux/Aux';
-import classes from './Product.module.css';
 
 const product = React.memo(props => {
-    const [product, setProduct] = useState({});
-    const [orderQuantity, setOrderQuantity] = useState(0);
+    const {id, name, category, brand, price, description, picture} = props;
 
-    const productId = props.match.params.id;
-    useEffect(() => {
-        api.getOneProduct(productId)
-                .then(product => {
-                    setProduct(product.data);
-                })
-                .catch(err => console.log(err));
-    }, [productId]);
-
-    const addHandler = () => {
-        let quantity = orderQuantity + 1;
-        setOrderQuantity(quantity);
+    const openProductHandler = (event) => {
+        event.preventDefault();
+        return (
+            window.location.href = `/api/${event.match.params.id}`
+        )
     };
 
-    const lessHandler = () => {
-        let quantity = orderQuantity - 1;
-        if(quantity <= 0) {
-            quantity = 0;
-        }
-        setOrderQuantity(quantity);
+    const purchaseProductHandler = () => { 
+        console.log('purchaseHandler');
     };
-        let card = (
-            <div key={product._id} className="col col-md-4 col-lg-2">
-                <Card className="card" style={{ width: '1000%' }}>
-                    <Card.Img className="card-img-top" variant="top" src={product.picture} />
-                    <Card.Body>
-                        <Card.Title>Id: {product._id}</Card.Title>
-                        <Card.Title>Nome: {product.product}</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">Categoria: {product.category}</Card.Subtitle>
-                        <Card.Text>Descrição: {product.description}</Card.Text>
-                        <Card.Text>Preço: {product.price}</Card.Text>
-                        <Card.Text>Marca: {product.brand}</Card.Text>
-                            <ButtonGroup className={classes.Buttons}>
-                                <Button onClick={() => lessHandler()} className="btn btn-danger">-</Button>
-                                <Button onClick={() => addHandler()} className="btn btn-primary">+</Button>
-                            </ButtonGroup>
-                        <Card.Link href="#">Comprar</Card.Link>
-                    </Card.Body>
-                </Card>
-            </div>
-        );
-    
-    
-    return (
+
+    return(
+        <>
         <Aux>
-        <hr />
-        <div className="container">
-            <div className={classes.Product}>
-                {card}
+            <div className='card' style={{width: '18rem'}}>
+                    <img className='card-img-top' style={{display: 'flex'}} src={picture} />
+                    
+                        <Card.Title>{name}</Card.Title>
+                        <Card.Text><strong>Preço: R$ {price.toFixed(2)}</strong></Card.Text>
+                        <Card.Subtitle className='mb-2 text-muted'>Categoria: {category}</Card.Subtitle>
+                        <Card.Text>Descrição: {description}</Card.Text>
+                        
+                        <Card.Text>Marca: {brand}</Card.Text>
+                        <Button id={id} onClick={() => purchaseProductHandler()} variant='warning'>Comprar</Button>
+                        <Button id={id} onClick={(event) => openProductHandler(event)} variant='primary'>Detalhe</Button>
             </div>
-        </div>
         </Aux>
+        </>
     );
 });
 

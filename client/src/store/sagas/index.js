@@ -2,8 +2,8 @@ import { takeEvery, all, takeLatest } from 'redux-saga/effects';
 
 import * as actionType from '../actions/actionTypes';
 import { logoutSaga, checkAuthTimeoutSaga, authCheckStateSaga, loginUserSaga, registerUserSaga } from './auth';
-import { initProductsSaga } from './product';
-import { purchaseProductSaga, fetchOrdersSaga } from './order';   
+import { initProductsSaga, productDetailSaga } from './product';
+import { purchaseProductSaga, fetchOrdersSaga } from './order';
 
 export function* watchAuth() {
     yield all([
@@ -16,7 +16,10 @@ export function* watchAuth() {
 }
 
 export function* watchProduct() {
-    yield takeEvery(actionType.INIT_PRODUCTS, initProductsSaga);
+    yield all([
+        takeEvery(actionType.INIT_PRODUCTS, initProductsSaga),
+        takeEvery(actionType.OPEN_DETAIL, productDetailSaga),
+    ])
 }
 
 export function* watchOrder() {

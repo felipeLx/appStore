@@ -5,6 +5,8 @@ import Aux from '../Aux/Aux';
 import classes from './Layout.module.css';
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
+// import theme from '../../components/ThemeContext/ThemeStyle';
+// import ThemeContext from '../../components/ThemeContext/ThemeContext';
 
 const layout = React.memo(props => {
     const [showSideDrawer, setShowSideDrawer] = useState(false);
@@ -19,15 +21,18 @@ const layout = React.memo(props => {
 
         return (
             <Aux>
+                {/* <ThemeContext.Provider value={theme.themes.dark}> */}
                 <Toolbar
                     isAuth={props.isAuthenticated}
                     isAdmin={props.isAdmin} 
                     drawerToggleClicked={sideDrawerToggleHandler} />
+                
                 <SideDrawer
                     isAuth={props.isAuthenticated} 
                     isAdmin={props.isAdmin} 
                     open={showSideDrawer}
                     closed={sideDrawerClosedHandler} />
+                {/* </ThemeContext.Provider> */}
                 <main className={classes.Content}>
                     {props.children}
                 </main>

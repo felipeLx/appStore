@@ -1,19 +1,33 @@
 .BuildControl {
     display: flex;
-    justify-content: space-between;
+    /* text-align: center;
+    
+    font-weight: bold;
+    font-size: 1.2rem;
+     */
+    padding: 10px;
+    align-content: space-between;
     align-items: center;
-    margin: 5px 0;
+    border: 1px solid black;
 }
 
-.BuildControl button {
-    display: block;
-    font: inherit;
-    padding: 5px;
-    margin: 0 5px;
-    width: 80px;
-    border: 1px solid #AA6817;
+.Buttons {
+    border-radius: 80%;
+    text-align: center;
+}
+
+.DinamicFields {
+    display: flex;
+    text-align: center;
+}
+
+button {
+    display: inline-block;
+    color: black;
     cursor: pointer;
     outline: none;
+    border-radius: 10%;
+    align-content: space-between;
 }
 
 
@@ -24,34 +38,30 @@
     cursor: default;
 }
 
-.BuildControl button:hover:disabled {
+button:hover:disabled {
     background-color: #AC9980;
     color: #ccc;
     cursor: not-allowed;
 }
 
-.Label {
-    padding: 10px;
-    font-weight: bold;
-    width: 80px;
-}
-
-.BuildControl .Less {  
-    background-color: #D39952;
+.Less {  
+    background-color: #7c0a23;
     color: white;
+    text-align: center;
 }
 
-.BuildControl .More {
-    background-color: #8F5E1E;
-    color: white;
+.More {
+    background-color: #5C9210;
+    color: black;
+    text-align: center;
 }
 
-.BuildControl .Less:hover, .BuildControl .Less:active {  
+.Less:hover, .BuildControl .Less:active {  
     background-color: #DAA972;
     color: white;
 }
 
-.BuildControl .More:hover,.BuildControl .More:active {
+.More:hover,.BuildControl .More:active {
     background-color: #99703F;
     color: white;
 }

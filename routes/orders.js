@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const Order = require('../models/order.model');
-
+const Product = require('../models/product.model');
 router.route('/').get(async(req,res) => {
     
     await Order.find({}, (err, orders) => {
@@ -16,80 +16,94 @@ router.route('/').get(async(req,res) => {
     })
 });
 
-let productId = '';
-
 router.route('/').post(async(req,res) => {
-    
-    if(!req.body) {
-        res.status('400').send('Preencher os campos obriatórios antes de enviar!');
-        return;
+    const {userId, productId, quantity, price, name,total} = req.body;
+    try{
+        let order = new Order({
+            total,
+            _id: userId,
+            product: {
+                _id: productId,
+                name,
+                price,
+                quantity,
+            }
+        });    
+        await order.save()
+                .then(ord => {
+                    res.json(ord);
+                });   
+        
+        await Product.findByIdAndUpdate(productId, {quantity: -quantity}, {new: true})
+    } catch(err) {
+        return res.json(err);
     }
-    
-    let order = new Order(req.body);    
-            await order.save()
-                    .then(ord => {
-                        orderId = ord._id;
-                        res.status(200).json({order: `${ord._id} adicionado com sucesso!`})
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        res.sendStatus(500);
-                        return;
-                    })   
+
+
 });
 
 router.route('/:id').get(async(req,res, next) => {
 
-    if(!req.params.id) {
-        res.status(500).send('Id da ordem não informado');
-    }
-
-    await Order.findById(req.params.id, (err, order) => {
+    const {id} = req.params.id;
+    try{
+        await Order.findById(id, (err, order) => {
         if(err) {
             return next(err);
         } else if(!order) {
-            return res.status(404).send('order não encontrado')
+            return res.status(500).send('order não encontrado')
         } else {
-            return res.status(200).send(order);
+            return res.json(order);
         }
-    })
+    })} catch(err) {
+        return res.json(err);
+    }
 });
 
 router.route('/:id').put(async(req,res, next) => {
-    if(!req.params.id) {
-        return res.status(500).send('ID da ordem não encontrado na base de dados');
-    }
+    const {userId, productId, quantity, price, name, total} = req.body;
     
-    await Order.findByIdAndUpdate(req.params.id, req.body, (err, order) => {
+    try{
+        await Order.findByIdAndUpdate(userId, {
+            total,
+            products: {
+                _id: productId,
+                quantity,
+                name,
+                price
+            }
+        }, (err, order) => {
         if(err) {
             return res.status(404).send(`Error: ${err}`);
         } else if(!order) {
             return res.status(404).send('order não encontrado')
         } else {
-            try{
                 order.save()
                     .then(order => {
-                        res.locals.redirect = `/${userId}`
-                        res.status(200).send(`order: ${order._id} alterado com sucesso!`)
+                        res.json(order)
                     })
-            } catch(err) {
-                next(err);
-            }
         }
-    })   
+        });
+        await Product.findByIdAndUpdate(productId, {quantity: -quantity}, {new: true})
+    } catch(err) {
+        next(err);
+    } 
 });
 
-router.route('/:id').delete(async(req,res) => {
-    if(!req.body) {
-        return res.status(500).send('Not data informed!')
-    }
-    await Order.findByIdAndRemove(req.params.id, req.body, (err, user) => {
+router.route('/:id').delete(async(req,res, next) => {
+    const {userId, quantity, productId} = req.body;
+    try{
+        await Order.findByIdAndRemove(userId, (err, order) => {
         if(err) {
-            return res.status(404).send('Order not found in Database');
+            return next(err);
         } else {
-            return res.status(200).send('Order deleted sucessfully!');
+            return res.status(200).send(`${order._id} : deleted sucessfully!'`);
         }
-    })
+        });
+
+        await Product.findByIdAndUpdate(productId, {quantity: +quantity}, {new: true});
+    } catch(err) {
+        return res.json(err);
+    }
 });
 
 module.exports = router;

@@ -1,42 +1,41 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const passport = require('passport');
+// const bcrypt = require('bcrypt');
+// const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const User = require('../models/user.model');
+// require('./models/user.model');
+// require('../passport/index');
 
 router.route('/').get(async(req,res) => {
     
-    await User.find({}, (err, users) => {
-        if(users.length === 0) {
-            return res.status(200).send('Good request, but don`t have data to show');
-        } else if(err) {
-            return res.status(404).send(err);
-        } else {
-            return res.status(200).send(users);
-        }
-    })
+    try{
+        await User.find({}, (err, users) => {
+            if(users.length === 0) {
+                return res.status(200).send('Good request, but don`t have data to show');
+            } else if(err) {
+                return res.status(404).send(err);
+            } else {
+                return res.status(200).send(users);
+            }
+        })
+    } catch(err) {
+        return res.json('users not found in Database');
+    }
 });
 
 // Login
 router.route('/login').post(async(req,res) => {
     const { email, password } = req.body;
 
-    try{ 
         let user = await User.findOne({email: email, password: password}, (err, userMatch) => {
-            console.log(userMatch);
             if(!userMatch) {
                 return res.json({msg: 'user not found!'});
             } else {
                 return res.status(200).send(userMatch);
             }
         });
-        console.log(user);
-        console.log(userMatch);
-    } catch (err) {
-        return res.json({msg: 'not posible to login!'});
-    }
 });
 
 // Logout

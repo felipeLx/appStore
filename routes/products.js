@@ -12,7 +12,7 @@ router.route('/').get(async(req,res) => {
         } else if(err) {
             res.json('Not possible to access your data in the database, verify the request! ' + err);
         } else {
-            return res.json(products);
+            return res.status(200).send(products);
         }
     })} catch(err) {
         return res.json('Not possible to access the database ' + err);
@@ -20,19 +20,27 @@ router.route('/').get(async(req,res) => {
 });
 
 router.route('/').post(async(req,res) => {
+    const { name, brand, quantity, price, description, picture, category  } = req.body;
     
-    try {
-        let product = await new Product(req.body);    
-            product.save()
-                .then(prod => {
-                    res.status(200).send(prod);
-                    window.alert('Product save successfully!');
-                })
-                .catch((err) => {
-                    res.json('Not possible to access your data in the database, verify the request! ' + err);
-    })} catch(err) {
-                        return res.json('Not possible to access the database ' + err);
-                    }
+        let newProduct = await Product.findOne({name: name}, (err, prdMatch) => {
+            if (prdMatch) {
+                return res.json({
+                    error: "Product already registered!"
+                });
+            }
+        })
+        newProduct = new Product({
+            name: name,
+            brand: brand,
+            quantity: quantity,
+            price: price,
+            picture: picture,
+            description: description, 
+            category: category,
+        });    
+            newProduct.save()
+            return res.status(200).send(newProduct);
+
 });
 
 router.route('/:id').get(async(req,res, next) => {

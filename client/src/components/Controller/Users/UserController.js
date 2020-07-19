@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Button, ButtonGroup } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
@@ -6,18 +6,19 @@ import api from '../../../api/index';;
 
 const userController = React.memo(props => {
 
-    const [usersList, setUsersList] = useState([]);
+    const [usersList] = useState([]);
 
     useEffect(() => {
+        const getUserHandler = async() => {
+            await api.getUserById(props.userId)
+                            .then(user => console.log(user))
+                            .catch(err => console.log(err));
+        };
+
         getUserHandler();
-    }, []);
+    }, [props.userId]);
+
     
-    const getUserHandler = async() => {
-        const editableUser = await api.getUserById(props.userId)
-                        .then(user => console.log(user))
-                        .catch(err => console.log(err));
-        console.log(editableUser);
-    };
 
     const editHandler = async(id) => {
         await api.updateUserById(id)

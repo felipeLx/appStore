@@ -2,6 +2,7 @@ import React from 'react';
 
 import classes from './NavigationItems.module.css';
 import NavigationItem from './NavigationItem/NavigationItem';
+// import ThemeButton from '../../ThemeContext/ThemeButton';
 
 const navigationItems = (props) => {
 
@@ -15,8 +16,9 @@ const navigationItems = (props) => {
                 ? <NavigationItem link="/dashboard">Dashboard</NavigationItem>
                 : null}
             {!props.isAuthenticated
-                ? <NavigationItem link="/user/login">Login</NavigationItem>
-                : <NavigationItem link="/user/logout">Logout</NavigationItem>}
+                ? <NavigationItem link="/users/login">Login</NavigationItem>
+                : <NavigationItem link="/users/logout">Logout</NavigationItem>}
+            {/* <ThemeButton /> */}
         </ul>
     );  
 };

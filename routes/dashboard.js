@@ -31,6 +31,32 @@ router.route('/api').get(async(req,res) => {
     })
 });
 
+router.route('/api').post(async(req,res) => {
+    console.log(req.body);
+    const { name, brand, quantity, price, description, picture, category  } = req.body;
+    
+        let newProduct = await Product.findOne({name: name}, (err, prdMatch) => {
+            if (prdMatch) {
+                return res.json({
+                    error: "Product already registered!"
+                });
+            }
+        });
+
+        newProduct = new Product({
+            name: name,
+            brand: brand,
+            quantity: quantity,
+            price: price,
+            picture: picture,
+            description: description, 
+            category: category,
+        });    
+            newProduct.save()
+            return res.status(200).send(newProduct);
+
+});
+
 router.route('/order').get(async(req,res) => {
     
     await Order.find({}, (err, orders) => {

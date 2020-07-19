@@ -30,7 +30,7 @@ export function* registerUserSaga(action) {
             password: action.password,
         };
         
-        let url = '/user/signup';
+        let url = '/users/signup';
         
         try{
             const response = api.post(url, authData); 
@@ -50,7 +50,7 @@ export function* loginUserSaga(action) {
             password: action.password
         };
         
-        let url = '/user/login';
+        let url = '/users/login';
         
         try{
             const response = api.post(url, loginData);

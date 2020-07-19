@@ -10,7 +10,6 @@ const api = axios.create({
 export function* initProductsSaga(action) {
     try{
         const response = yield api.get( '/api' );
-        console.log(response);
         yield put(actions.setProducts(response.data));
     } catch(error) {
         yield put(actions.fetchProductsFailed());
@@ -19,9 +18,8 @@ export function* initProductsSaga(action) {
 
 export function* productDetailSaga(action) {
     try{
-        const response = yield api.get( '/api', action.userId );
-        console.log(response);
-        yield put(actions.setProducts(response.data));
+        const response = yield api.get( `/api/${action.productId}` );
+        yield put(actions.openDetail(response.data));
     } catch(error) {
         yield put(actions.fetchProductsFailed());
     }

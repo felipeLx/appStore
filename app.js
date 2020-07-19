@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const {json} = require("body-parser");
 const mongoose = require('mongoose');
 const session = require("express-session");
-const passport = require("passport");
+// const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const path = require('path');
 const cors = require('cors');
@@ -15,9 +15,6 @@ const productsRoute = require('./routes/products');
 const ordersRoute = require('./routes/orders');
 const dashboardRoute = require('./routes/dashboard');
 const usersRoute = require('./routes/users');
-
-require('./models/user.model');
-require('./passport');
 
 const app = express();
 
@@ -45,15 +42,15 @@ if(process.env.NODE_ENV === 'production') {
   
 //Routes
 app.use('/api', productsRoute);
-app.use('/user', usersRoute);
-app.use('/order', ordersRoute);
+app.use('/users', usersRoute);
+app.use('/orders', ordersRoute);
 app.use('/dashboard', dashboardRoute);
 app.use('/', indexRoute);
 
 
 // Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 //Get the default connection
 let db = mongoose.connect('mongodb+srv://felipealisboa:Universidade.2010@cluster0-fqbok.mongodb.net/storeDB', {

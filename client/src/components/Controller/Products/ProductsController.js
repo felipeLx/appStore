@@ -9,7 +9,7 @@ const productsController = React.memo(props => {
 
     const [editFields, setEditFields] = useState(false); 
     const [productsList, setProductsList] = useState([]);
-    const [id, setId] = useState('');
+    const [editableProductId, setEditableProductId] = useState('');
     const [controls, setControls] = useState({
         name: {
           elementType: 'input',
@@ -28,7 +28,7 @@ const productsController = React.memo(props => {
             value: ''
           },
         description: {
-            elementType: 'textarea',
+            elementType: 'input',
             elementConfig: {
                 type: 'textarea',
                 placeholder: 'Descrição do produto'
@@ -38,10 +38,10 @@ const productsController = React.memo(props => {
         price: {
             elementType: 'input',
             elementConfig: {
-                type: 'text',
+                type: 'number',
                 placeholder: 'Preço de venda'
             },
-            value: ''
+            value: 0
           },
         category: {
             elementType: 'input',
@@ -50,6 +50,22 @@ const productsController = React.memo(props => {
                 placeholder: 'Categoria'
             },
             value: ''
+          },
+          quantity: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'number',
+                placeholder: 'Quantidade'
+            },
+            value: 0
+          },
+          picture: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'text',
+                placeholder: 'Link da imagem'
+            },
+            value: 0
           }
     });
     
@@ -61,41 +77,91 @@ const productsController = React.memo(props => {
             .catch(err => console.log(err));
     }, []);
 
-    const editHandler = () => {
+    const editHandler = async(event) => {
+        event.preventDefault();     
+        setEditFields(!editFields); 
+        let index = event.target.id;
+        let idProductToEdited = productsList[index]._id;
+        setEditableProductId(idProductToEdited);
+        const response = await api.getOneProduct(idProductToEdited);
         
-        setEditFields(!editFields);
-        setId(productsList[0]._id);
-        setControls({
-            name: {
-                value: productsList[0].product 
-            },
-            brand: {
-                value: productsList[0].brand 
-            },
-            category: {
-                value: productsList[0].category 
-            },
-            price: {
-                value: productsList[0].price
-            },
-            description: {
-                value: productsList[0].description
-            },
+        try {
+            setControls({
+                name: {
+                    value: response.data.name
+                },
+                brand: {
+                    value: response.data.brand
+                },
+                price: {
+                    value: response.data.price
+                },
+                quantity: {
+                    value: response.data.quantity
+                },
+                description: {
+                    value: response.data.description
+                },
+                picture: {
+                    value: response.data.picture.toString()
+                },
+                category: {
+                    value: response.data.category
+                }
+            })
+        } catch(err) {
+                console.log(err);
+            }
+    };
+      
+    let input = '';
+    
+    const formElementsArray = [];
+        for ( let key in controls ) {
+            formElementsArray.push({
+                id: key,
+                config: controls[key]
         });
     };
 
-    const sendEditedHandler = async() => {
+    if(editFields) {
+        input = formElementsArray.map( formElement => {
+            return (
+            <div key={formElement.id}>
+            <Input
+                value={formElement.config.value}
+                label={formElement.id}
+                changed={( event ) => inputChangedHandler( event, formElement.id )} />
+            </div>    
+            )
+        });   
+    };
+
+
+    const inputChangedHandler = ( event, controlName ) => {
+        const updatedControls = updateObject( controls, {
+            [controlName]: updateObject( controls[controlName], {
+                value: event.target.value,
+                })
+            });
+            setControls(updatedControls);
+        };
+
+
+    const submitProductHandler = async() => {
         const updateProduct = {
             product: controls.name.value,
             brand: controls.brand.value,
             category: controls.category.value,
             price: controls.price.value,
             description: controls.description.value,
+            picture: controls.picture.value,
+            quantity: controls.quantity.value
         };
 
-        await api.updateProductById(id, updateProduct )
-            .then(prod => window.location.reload(true))
-            .catch(err => console.log(err))
+        const response = await api.updateProductById(editableProductId, updateProduct);
+        console.log(response);
+        
     };
 
     const deleteHandler = async(id) => {
@@ -104,66 +170,51 @@ const productsController = React.memo(props => {
         .catch(err => console.log(err))
     };
 
-    let form = productsList.map(product => (
-            <Card key={product._id} className="card">
-                <Card.Img className="card-img-top" variant="top" src={product.picture} />
-                <Card.Body className="card-body">
-                    <Card.Text><strong>Name: </strong>{product.product}</Card.Text>
-                    <Card.Text><strong>Marca</strong>{product.brand}</Card.Text>
-                    <Card.Text><strong>Preço: </strong>{product.price}</Card.Text>
-                    <Card.Text><strong>Categoria: </strong>{product.category}</Card.Text>
-                    <Card.Text><strong>Descrição:</strong> {product.description}</Card.Text>
-                </Card.Body>
-            </Card>
+    let form = [];
 
-    ));
-
-    const inputChangedHandler = ( event, controlName ) => {
-        const updatedControls = updateObject( controls, {
-            [controlName]: updateObject( controls[controlName], {
-                value: event.target.value,
-                valid: checkValidity( event.target.value, controls[controlName].validation ),
-                touched: true
-                })
-            });
-            setControls(updatedControls);
-        };
-  
-    const formElementsArray = [];
-        for ( let key in controls ) {
-            formElementsArray.push( {
-                id: key,
-                config: controls[key]
-            } );
-    };
-
-    if(editFields) {
-        form = formElementsArray.map( formElement => (
-                <Input  
-                    key={formElement.config.value}
-                    label={formElement.id}
-                    value={formElement.config.value}
-                    changed={( event ) => inputChangedHandler( event, formElement.id )} />
+    if(productsList.length > 0) {
+        let elementIndex;
+        productsList.map(product => {
+            for(let i = 0; i < productsList.length; i++) {
+                if(productsList[i].name === product.name) {
+                    elementIndex = i;
+                }}
+            form.push(
+                <div key={product._id} className='col' >
+                    <Card>
+                        <Card.Body>
+                            <Card.Text><strong>Name: </strong>{product.name}</Card.Text>
+                            <Card.Text><strong>Marca</strong>{product.brand}</Card.Text>
+                            <Card.Text><strong>Preço: R$ </strong>{product.price}</Card.Text>
+                            <Card.Text><strong>Quantidade: </strong>{product.quantity}</Card.Text>
+                            <Card.Text><strong>Categoria: </strong>{product.category}</Card.Text>
+                            <Card.Text><strong>Descrição:</strong> {product.description}</Card.Text>
+                            <Card.Text><strong>Link da imagem:</strong> {product.picture.toString()}</Card.Text>
+                        </Card.Body>
+                    </Card>
+                    <div className='col'>
+                        {!editFields ? 
+                            <Button type='button' id={elementIndex} style={{margin: '10px'}} onClick={editHandler} className='btn btn-warning'>EDITAR</Button> :
+                            null
+                        }
+                    
+                        <Button style={{margin: '10px'}} onClick={(event) => deleteHandler(event.target.params.id)} className='btn btn-danger btn-space'>DELETE</Button>
+                    </div>
+                </div>
             )
-        )       
-    };
+        });
+    }
     
 
     return(
-        <div className="container">
-            <div className="row">
-                <form>
-                  {form}
-                    <div className="col">
-                        {!editFields ? 
-                            <Button onClick={(index) => editHandler(index)} className="btn btn-warning">EDITAR</Button> :
-                            <Button onClick={() => sendEditedHandler()} className="btn btn-info">ENVIAR</Button>
-                        }
-                    </div>
-                    <div className="col">
-                        <Button onClick={(event) => deleteHandler(event.target.params.id)} className="btn btn-danger btn-space">DELETE</Button>
-                    </div>
-                </form>
+        <div className='container'>
+            <div className='row'>
+                {editFields ? 
+                    <form action="POST" onSubmit={submitProductHandler}>
+                        {input}
+                        <Button type='submit' style={{margin: '10px'}} className='btn btn-info'>ENVIAR</Button>
+                    </form> : 
+                    <div>{form}</div>}
             </div>
         </div>
     ); 

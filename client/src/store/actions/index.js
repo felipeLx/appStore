@@ -3,7 +3,8 @@ export {
     removeProduct,
     initProducts,
     setProducts,
-    fetchProductsFailed
+    fetchProductsFailed,
+    openDetail,
 } from './product';
 export {
     purchaseProduct,

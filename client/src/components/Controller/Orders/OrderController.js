@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Button, ButtonGroup } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import axios from 'axios';
 
 import api from '../../../api/index';
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import * as actions from '../../../store/actions/index';
 
 const orderController = React.memo(props => {
-
+    
     const [orderList, setOrderList] = useState([]);
 
     useEffect(() => {
+        const getOrderHandler = async() => {
+            const checkedOrder = await api.getOrderById(props.userId)
+                            .then(order => setOrderList(order))
+                            .catch(err => console.log(err));
+            console.log(checkedOrder);
+        };
         getOrderHandler();
-    }, []);
+    }, [props.userId]);
     
-    const getOrderHandler = async() => {
-        const checkedOrder = await api.getOrderById(props.userId)
-                        .then(order => console.log(order))
-                        .catch(err => console.log(err));
-        console.log(checkedOrder);
-    };
+    
 
     const editHandler = async(id) => {
         await api.updateUserById(id)
@@ -60,8 +64,17 @@ const orderController = React.memo(props => {
 
 const mapStateToProps = state => {
     return {
-        userId: state.auth.userId
+        orders: state.order.orders,
+        loading: state.order.loading,
+        token: state.auth.token || state.sigunp.token,
+        userId: state.auth.userId || state.sigunp.userId
     };
-  };
+};
 
-export default connect(mapStateToProps)(orderController);
+const mapDispatchToProps = dispatch => {
+    return {
+        onFetchOrders: (token, userId) => dispatch( actions.fetchOrders(token, userId) )
+    };
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( withErrorHandler( orderController, axios ) );

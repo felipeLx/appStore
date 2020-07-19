@@ -64,13 +64,12 @@ const login = React.memo(props => {
       try {
         const response = await props.onLogin( controls.email.value, controls.password.value );
         console.log(response);
-          if(!response) {
-            console.log('no fetch data');
-          } else {
-            const expirationDate = new Date().getTime();
-            localStorage.setItem('token', response._id);
-            localStorage.setItem('expirationDate', expirationDate);
-            localStorage.setItem('userId', response.email);}
+        
+        const expirationDate = new Date().getTime();
+        const token = expirationDate + response.email;
+        localStorage.setItem('token', token);
+        localStorage.setItem('expirationDate', expirationDate);
+        localStorage.setItem('userId', response.email);
       } catch(err) {
         console.log(err);
       }
@@ -147,7 +146,7 @@ const mapStateToProps = state => {
       error: state.auth.error,
       isAuthenticated: state.auth.token !== null || state.signup.token !== null,
       isAdmin: state.auth.isAdmin,
-      buildingProduct: state.productBuilder.building,
+      buildingProduct: state.product.building,
       authRedirectPath: state.signup.signupRedirectPath
   };
 };

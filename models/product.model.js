@@ -1,22 +1,21 @@
+const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const findOrCreate = require("mongoose-findorcreate");
-const session = require("express-session");
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const fs = require('fs');
 
-
+const app = express();
+app.use(bodyParser.urlencoded({extended: true}));
 
 const productSchema = new mongoose.Schema({
-    product: {type: String, require: true},
+    name: {type: String, require: true},
     description: {type: String, require: true},
     brand: {type: String, require: true},
-    googleId: {type: String},
     category: {type: String, require: true},
-    picture: {type: Object, data: Buffer, require: false},
+    picture: {type: String, require: true},
     price: {type: Number, require: true},
-    rating: {type: Number, require: false},
-    order: {type: String, require: false}
+    quantity: {type: Number, require: true},
+    rating: {type: Number, require: true, default: 5},
+    insertTime: {type: Date, required: true, default: Date.now()}
   });
 
 productSchema.plugin(findOrCreate);
