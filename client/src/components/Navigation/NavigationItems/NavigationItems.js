@@ -8,7 +8,7 @@ const navigationItems = (props) => {
 
     return(
         <ul className={classes.navigationItems}>
-            <NavigationItem link="/" exact>Produtos</NavigationItem>
+            <NavigationItem link="/api" exact>Produtos</NavigationItem>
             {props.isAuthenticated && !props.isAdmin
                 ? <NavigationItem link="/dashboard">Dashboard</NavigationItem>
                 : null }

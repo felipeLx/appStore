@@ -10,16 +10,16 @@ import * as actions from '../../store/actions/index';
 
 const login = React.memo(props => {
   const [controls, setControls] = useState({
-    email: {
+    username: {
         elementType: 'input',
         elementConfig: {
-            type: 'email',
-            placeholder: 'Mail Address'
+            type: 'text',
+            placeholder: 'Username'
         },
         value: '',
         validation: {
             required: true,
-            isEmail: true
+            isEmail: false
         },
         valid: false,
         touched: false
@@ -62,7 +62,7 @@ const login = React.memo(props => {
   const submitHandler = async(event) => {
     event.preventDefault();
       try {
-        const response = await props.onLogin( controls.email.value, controls.password.value );
+        const response = await props.onLogin( controls.username.value, controls.password.value );
         console.log(response);
         
         const expirationDate = new Date().getTime();
@@ -127,7 +127,7 @@ const login = React.memo(props => {
             <b>Login</b>
           </h4>
           <p className="grey-text text-darken-1">
-            Ainda não tem uma conta? <Link to="/user/signup">Registrar</Link>
+            Ainda não tem uma conta? <Link to="/users/signup">Registrar</Link>
           </p>
         </div>
         <form action="POST" onSubmit={submitHandler}>
@@ -153,7 +153,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-      onLogin: ( email, password ) => dispatch( actions.login( email, password ) ),
+      onLogin: ( username, password ) => dispatch( actions.login( username, password ) ),
       onSetSignupRedirectPath: () => dispatch( actions.setSignupRedirectPath( '/' ) )
   };
 };

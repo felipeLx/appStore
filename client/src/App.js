@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Layout from './hoc/Layout/Layout';
 import ProductsBuilder from './containers/Products/ProductsBuilder';
 import Logout from './containers/Auth/Logout/Logout';
-import Product from './components/Product/Product';
+import ProductDetail from './components/Product/ProductDetail';
 import * as actions from './store/actions/index';
 
 const AdminDashboard = React.lazy(() => {
@@ -54,9 +54,9 @@ const app = React.memo(props => {
   
   let routes = (
       <Switch>
-          <Route path="/user/signup" render={props => <Signup {...props} />} />
-          <Route path="/user/login" render={props => <Login {...props} />} />
-          <Route path='/api/:id' render={props => <Product {...props} />} />
+          <Route path="/users/signup" render={props => <Signup {...props} />} />
+          <Route path="/users/login" render={props => <Login {...props} />} />
+          <Route path='/api/:id' component={ProductDetail} />
           <Route path='/' exact render={props => <ProductsBuilder {...props} />} />
           <Redirect to="/" />
       </Switch>
@@ -65,7 +65,7 @@ const app = React.memo(props => {
   if(props.isAuthenticated && !props.isAdmin) {
     routes = ( 
       <Switch>
-          <Route path='/api/:id' exact component={Product} />
+          <Route path='/api/:id' component={ProductDetail} />
           <Route path="/dashboard" render={props => <UserDashboard {...props} />} />
           <Route path="/dashboard/user" render={props => <UserController {...props} />} />
           <Route path="/dashboard/orders" render={props => <OrderController {...props} />} />
@@ -79,7 +79,7 @@ const app = React.memo(props => {
   if(props.isAdmin) {
     routes = ( 
       <Switch>
-          <Route path='/api/:id' exact component={Product} />
+          <Route path='/api/:id' component={ProductDetail} />
           <Route path="/" exact render={props => <ProductsBuilder {...props} />} />
           <Route path="/users/logout" component={Logout} />
           <Route path='/dashboard' render={props => <AdminDashboard {...props} />} />
@@ -90,15 +90,6 @@ const app = React.memo(props => {
       </Switch>
     );
   }
-
-  // if(props.isAdmin) {
-  //   routes = ( 
-      // <Switch>
-        // <Route path="/dashboard" component={Dashboard} />
-        
-      // </Switch>
-  //   )
-  // }
 
   return (
     <div>

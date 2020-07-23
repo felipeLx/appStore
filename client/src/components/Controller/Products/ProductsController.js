@@ -3,11 +3,12 @@ import { Card, Button } from 'react-bootstrap';
 
 import api from '../../../api/index';
 import Input from '../../UI/Input/Input';
-import { updateObject, checkValidity } from '../../../shared/utility';
+import { updateObject } from '../../../shared/utility';
 
 const productsController = React.memo(props => {
 
-    const [editFields, setEditFields] = useState(false); 
+    const [editFields, setEditFields] = useState(false);
+    const [deleteProduct, setDeleteProduct] = useState(false); 
     const [productsList, setProductsList] = useState([]);
     const [editableProductId, setEditableProductId] = useState('');
     const [controls, setControls] = useState({
@@ -72,6 +73,7 @@ const productsController = React.memo(props => {
     useEffect(() => {
         api.getAllProducts()
             .then(products => {
+                console.log(products.data);
                 setProductsList(products.data);
             })
             .catch(err => console.log(err));
@@ -148,7 +150,7 @@ const productsController = React.memo(props => {
         };
 
 
-    const submitProductHandler = async() => {
+    const submitProductHandler = () => {
         const updateProduct = {
             product: controls.name.value,
             brand: controls.brand.value,
@@ -159,14 +161,19 @@ const productsController = React.memo(props => {
             quantity: controls.quantity.value
         };
 
-        const response = await api.updateProductById(editableProductId, updateProduct);
+        const response = api.updateProductById(editableProductId, updateProduct);
         console.log(response);
         
     };
 
-    const deleteHandler = async(id) => {
-        await api.deleteProductById(id)
-        .then(prod => window.location.reload(true))
+    const deleteHandler = async(event) => {
+        event.preventDefault();
+        setDeleteProduct(!deleteProduct);
+        let index = event.target.id;
+        let idProductToDelete = productsList[index]._id;
+        let productName = productsList[index]._name;
+        await api.deleteProductById(idProductToDelete)
+        .then(setTimeout(window.alert(`${productName} deleted!`), 3000))
         .catch(err => console.log(err))
     };
 
@@ -174,7 +181,7 @@ const productsController = React.memo(props => {
 
     if(productsList.length > 0) {
         let elementIndex;
-        productsList.map(product => {
+        productsList.forEach(product => {
             for(let i = 0; i < productsList.length; i++) {
                 if(productsList[i].name === product.name) {
                     elementIndex = i;
@@ -198,7 +205,10 @@ const productsController = React.memo(props => {
                             null
                         }
                     
-                        <Button style={{margin: '10px'}} onClick={(event) => deleteHandler(event.target.params.id)} className='btn btn-danger btn-space'>DELETE</Button>
+                        {!deleteProduct ? 
+                            <Button type='button' id={elementIndex} style={{margin: '10px'}} onClick={deleteHandler} className='btn btn-danger btn-space'>DELETE</Button> :
+                            null
+                            }
                     </div>
                 </div>
             )

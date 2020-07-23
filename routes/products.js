@@ -2,27 +2,28 @@ const express = require('express');
 const router = express.Router();
 
 const Product = require('../models/product.model');
+const { response } = require('express');
 
-router.route('/').get(async(req,res) => {
+router.get("/", (req,res, next) => {
     
     try {
-        const products = await Product.find({}, (err, products) => {
+        const products = Product.find({}, (err, products) => {
         if(products.length === 0) {
-            return res.json('Good request, but don`t have data to show');
+            return res.status(301).json({success: false, msg: 'Good request, but don`t have data to show'});
         } else if(err) {
-            res.json('Not possible to access your data in the database, verify the request! ' + err);
+            return res.status(403).json({success: false, msg: 'Not possible to access your data in the database, verify the request! ' + err});
         } else {
-            return res.status(200).send(products);
+            return res.status(200).json({success: true, product: products, msg: 'List of products'});
         }
     })} catch(err) {
-        return res.json('Not possible to access the database ' + err);
+        return next(err);
     }
 });
 
-router.route('/').post(async(req,res) => {
+router.post("/", (req,res, next) => {
     const { name, brand, quantity, price, description, picture, category  } = req.body;
     
-        let newProduct = await Product.findOne({name: name}, (err, prdMatch) => {
+        let newProduct = Product.findOne({name: name}, (err, prdMatch) => {
             if (prdMatch) {
                 return res.json({
                     error: "Product already registered!"
@@ -39,38 +40,37 @@ router.route('/').post(async(req,res) => {
             category: category,
         });    
             newProduct.save()
-            return res.status(200).send(newProduct);
+            return res.status(200).json({success: true, product: newProduct, msg: 'New product created'});
 
 });
 
-router.route('/:id').get(async(req,res, next) => {
-
+router.get("/:id", (req,res, next) => {
     try {
-        const product = await Product.findById(req.params.id, (err, product) => {
+        const product = Product.findById(req.params.id, (err, product) => {
             if(err) {
             return next(err);
             } else if(!product) {
-                res.json('Not possible to access your data in the database, verify the request! ' + err);
+                res.status(400).json({success: false, msg:'Not possible to access your data in the database, verify the request! '});
         } else {
-            return res.json(product);
+            return res.status(200).json({success: true, product: product, msg: 'Get the product by Id'});
         }
     })} catch(err) {
-        return res.json('Not possible to access the database ' + err);
+        return next(err);
     }
 });
 
-router.route('/:id').put(async(req,res, next) => {
+router.put('/:id', (req,res, next) => {
 
     try {
-        await Product.findByIdAndUpdate(req.params.id, req.body, (err, product) => {
+        Product.findByIdAndUpdate(req.params.id, req.body, (err, product) => {
         if(err) {
-            return res.status(500).send('Product not found in Database');
+            return res.status(301).json({success: false, msg: 'Product not found in Database'});
         } else if(!product) {
-            return res.status(404).send('Producto não encontrado');
+            return res.status(403).json({success: false, msg: 'Producto não encontrado'});
         }else {
             product.save()
                     .then(prod => {
-                        return res.json(prod);
+                        return res.status(200).json({success: true, product: prod, msg: 'Product updated!'});
                     })
                     .catch(err => {
                         next(err);
@@ -80,14 +80,14 @@ router.route('/:id').put(async(req,res, next) => {
     }
 });
 
-router.route('/:id').delete(async(req,res) => {
+router.delete('/:id', (req,res) => {
    
     try {
-        await Product.findByIdAndRemove(req.params.id, req.body, (err, user) => {
+        Product.findByIdAndRemove(req.params.id, req.body, (err, product) => {
         if(err) {
-            return res.json('Product not found in Database');
+            return res.status(301).json({success: false, msg: 'Product not found in Database'});
         } else {
-            return res.json('Product deleted sucessfully!');
+            return res.status(200).json({success: true, product: product, msg: 'Product deleted'});
         }
     })} catch(err)  {
         return res.json('Not possible to access the database ' + err);

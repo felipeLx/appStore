@@ -46,10 +46,10 @@ export const checkAuthTimeout = (expirationTime) => {
     }
 };
 
-export const login = (email, password) => {
+export const login = (username, password) => {
     return {
         type: actionTypes.AUTH_USER,
-        email: email,
+        username: username,
         password: password,
     };
 };

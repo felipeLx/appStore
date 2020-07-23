@@ -1,41 +1,30 @@
-const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
+const User = require('mongoose').model('User');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 
-const User = require('../models/user.model');
+const pathToKey = path.join(__dirname, '..', 'id_rsa_pub.pem');
+const PUB_KEY = fs.readFileSync(pathToKey, 'utf8');
 
-module.exports = {
-  passportAuth: function(passport) {
-  passport.use(
-    new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
-      // Match user
-      User.findOne({
-        email: email
-      }).then(user => {
-        if (!user) {
-          return done(null, false, { message: 'That email is not registered' });
-        }
+const options = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: PUB_KEY,
+    algorithms: ['RS256']
+};
 
-        // Match password
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-          if (err) throw err;
-          if (isMatch) {
-            return done(null, user);
-          } else {
-            return done(null, false, { message: 'Password incorrect' });
-          }
-        });
-      });
-    })
-  );
+const strategy = new JwtStrategy(options, (payload, done) => {
+    User.findById(payload.sub)
+        .then(user => {
+            if(user) {
+                return done(null, user);
+            } else {
+                return done(null, false);
+            }
+        })
+        .catch(err => done(err, null));
+});
 
-  passport.serializeUser(function(user, done) {
-    done(null, user._id);
-  });
-
-  passport.deserializeUser((id, done) => {
-    var userId = mongoose.Schema.Types.ObjectId(id);
-    Product.findById(userId, (err, user) => {
-      done(err, user);
-    });
-  });
-}};
+module.exports = (passport) => {
+    passport.use(strategy);
+}

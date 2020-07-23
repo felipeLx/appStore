@@ -6,7 +6,6 @@ import Product from '../../components/Product/Product';
 import BuildControls from '../../components/Product/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Product/OrderSummary/OrderSummary';
-// import Spinner from '../../components/UI/Spinner/Spinner';
 import * as actions from '../../store/actions';
 import Aux from '../../hoc/Aux/Aux';
 import api from '../../api';
@@ -21,10 +20,10 @@ const ProductsBuilder = props => {
         getAllProducts();
     }, []);
 
-    const getAllProducts = async() => {
+    const getAllProducts = () => {
         try {
-            await api.getAllProducts()
-                .then(prds => setProducts(prds.data) );
+            api.getAllProducts()
+                .then(prds => setProducts(prds.data.product) );
         } catch(err) {
             console.log('Error to fetch the data in the front-end component: ' + err);
         }
@@ -71,7 +70,7 @@ const ProductsBuilder = props => {
     }
 
     if ( products.length > 0 ) {
-        products.map(prd => {
+        products.forEach(prd => {
             productArray.push(    
                  
                 <Card.Body key={prd._id} style={{textAlign: 'center'}}>

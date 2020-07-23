@@ -10,7 +10,7 @@ const product = React.memo(props => {
     const openProductHandler = (event) => {
         event.preventDefault();
         return (
-            window.location.href = `/api/${event.match.params.id}`
+            window.location.href = `/api/${event.target.id}`
         )
     };
 
@@ -22,7 +22,7 @@ const product = React.memo(props => {
         <>
         <Aux>
             <div className='card' style={{width: '18rem'}}>
-                    <img className='card-img-top' style={{display: 'flex'}} src={picture} />
+                    <img alt='' className='card-img-top' style={{display: 'flex'}} src={picture} />
                     
                         <Card.Title>{name}</Card.Title>
                         <Card.Text><strong>Preço: R$ {price.toFixed(2)}</strong></Card.Text>
@@ -30,8 +30,8 @@ const product = React.memo(props => {
                         <Card.Text>Descrição: {description}</Card.Text>
                         
                         <Card.Text>Marca: {brand}</Card.Text>
-                        <Button id={id} onClick={() => purchaseProductHandler()} variant='warning'>Comprar</Button>
-                        <Button id={id} onClick={(event) => openProductHandler(event)} variant='primary'>Detalhe</Button>
+                        <Button id={id} onClick={purchaseProductHandler} variant='warning'>Comprar</Button>
+                        <Button id={id} onClick={openProductHandler} variant='primary'>Detalhe</Button>
             </div>
         </Aux>
         </>

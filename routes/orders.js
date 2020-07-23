@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 
 const Order = require('../models/order.model');
 const Product = require('../models/product.model');
-router.route('/').get(async(req,res) => {
+
+router.get("/", passport.authenticate('jwt', {session: false}), (req,res, next) => {
     
-    await Order.find({}, (err, orders) => {
+    Order.find({}, (err, orders) => {
         if(orders.length === 0) {
             res.status(200).send('Good request, but don`t have data to show');
         } else if(err) {
@@ -16,7 +18,7 @@ router.route('/').get(async(req,res) => {
     })
 });
 
-router.route('/').post(async(req,res) => {
+router.post("/", passport.authenticate('jwt', {session: false}), (req,res) => {
     const {userId, productId, quantity, price, name,total} = req.body;
     try{
         let order = new Order({
@@ -29,12 +31,12 @@ router.route('/').post(async(req,res) => {
                 quantity,
             }
         });    
-        await order.save()
+        order.save()
                 .then(ord => {
                     res.json(ord);
                 });   
         
-        await Product.findByIdAndUpdate(productId, {quantity: -quantity}, {new: true})
+        Product.findByIdAndUpdate(productId, {quantity: -quantity}, {new: true})
     } catch(err) {
         return res.json(err);
     }
@@ -42,11 +44,11 @@ router.route('/').post(async(req,res) => {
 
 });
 
-router.route('/:id').get(async(req,res, next) => {
+router.get("/:id", passport.authenticate('jwt', {session: false}), (req,res, next) => {
 
     const {id} = req.params.id;
     try{
-        await Order.findById(id, (err, order) => {
+        Order.findById(id, (err, order) => {
         if(err) {
             return next(err);
         } else if(!order) {
@@ -59,11 +61,11 @@ router.route('/:id').get(async(req,res, next) => {
     }
 });
 
-router.route('/:id').put(async(req,res, next) => {
+router.put("/:id", passport.authenticate('jwt', {session: false}), (req,res, next) => {
     const {userId, productId, quantity, price, name, total} = req.body;
     
     try{
-        await Order.findByIdAndUpdate(userId, {
+        Order.findByIdAndUpdate(userId, {
             total,
             products: {
                 _id: productId,
@@ -83,16 +85,16 @@ router.route('/:id').put(async(req,res, next) => {
                     })
         }
         });
-        await Product.findByIdAndUpdate(productId, {quantity: -quantity}, {new: true})
+        Product.findByIdAndUpdate(productId, {quantity: -quantity}, {new: true})
     } catch(err) {
         next(err);
     } 
 });
 
-router.route('/:id').delete(async(req,res, next) => {
+router.delete("/:id", passport.authenticate('jwt', {session: false}), (req,res, next) => {
     const {userId, quantity, productId} = req.body;
     try{
-        await Order.findByIdAndRemove(userId, (err, order) => {
+        Order.findByIdAndRemove(userId, (err, order) => {
         if(err) {
             return next(err);
         } else {
@@ -100,7 +102,7 @@ router.route('/:id').delete(async(req,res, next) => {
         }
         });
 
-        await Product.findByIdAndUpdate(productId, {quantity: +quantity}, {new: true});
+        Product.findByIdAndUpdate(productId, {quantity: +quantity}, {new: true});
     } catch(err) {
         return res.json(err);
     }

@@ -1,14 +1,13 @@
 import { takeEvery, all, takeLatest } from 'redux-saga/effects';
 
 import * as actionType from '../actions/actionTypes';
-import { logoutSaga, checkAuthTimeoutSaga, authCheckStateSaga, loginUserSaga, registerUserSaga } from './auth';
+import { logoutSaga, authCheckStateSaga, loginUserSaga, registerUserSaga } from './auth';
 import { initProductsSaga, productDetailSaga } from './product';
 import { purchaseProductSaga, fetchOrdersSaga } from './order';
 
 export function* watchAuth() {
     yield all([
         takeEvery(actionType.AUTH_INITIATE_LOGOUT, logoutSaga),
-        takeEvery(actionType.AUTH_CHECK_TIMEOUT, checkAuthTimeoutSaga),
         takeEvery(actionType.AUTH_USER, loginUserSaga),
         takeEvery(actionType.SIGNUP_USER, registerUserSaga),
         takeEvery(actionType.AUTH_CHECK_STATE, authCheckStateSaga)  

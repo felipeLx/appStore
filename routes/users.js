@@ -1,147 +1,109 @@
 const express = require('express');
 const router = express.Router();
-// const bcrypt = require('bcrypt');
-// const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const passport = require('passport');
+const utils = require('../lib/utils');
 
 const User = require('../models/user.model');
-// require('./models/user.model');
-// require('../passport/index');
 
-router.route('/').get(async(req,res) => {
-    
-    try{
-        await User.find({}, (err, users) => {
-            if(users.length === 0) {
-                return res.status(200).send('Good request, but don`t have data to show');
-            } else if(err) {
-                return res.status(404).send(err);
-            } else {
-                return res.status(200).send(users);
-            }
-        })
-    } catch(err) {
-        return res.json('users not found in Database');
-    }
+router.get('/', (req,res, next) => {
+    User.find({}, (err, users) => {
+        if(users.length === 0) {
+            return res.status(301).json({success: false, msg: 'Good request, but don`t have data to show'});
+        } else if(err) {
+            return res.status(400).json({success: false, msg: 'Error to access the database'});
+        } else {
+            return res.status(200).json({success: true, user: users, msg: 'Users listed!'});
+        }
+    })
 });
 
 // Login
-router.route('/login').post(async(req,res) => {
-    const { email, password } = req.body;
-
-        let user = await User.findOne({email: email, password: password}, (err, userMatch) => {
-            if(!userMatch) {
-                return res.json({msg: 'user not found!'});
-            } else {
-                return res.status(200).send(userMatch);
+router.post('/login', (req,res, next) => {
+    User.findOne({username: req.body.username})
+        .then(user => {
+            if(!user) {
+                res.status(401).json({success: false, msg: "user not found!"});
             }
-        });
+        
+            const isValid = utils.validPassword(req.body.password, user.hash, user.salt);
+
+            if(isValid) {
+                const tokenObj = utils.issueJWT(user);
+                res.status(200).json({success: true, user: user, token: tokenObj.token, expiresIn: tokenObj.expires})
+            } else {
+                res.status(401).json({success: false, msg: "wrong username or password"});
+            }
+        })
+        .catch(err => {
+            next(err);
+        })
 });
 
 // Logout
-router.route('/logout').post((req,res) => {
+router.post('/logout',(req,res, next) => {
     if (req.params) {
 		req.session.destroy();
 		res.clearCookie('connect.sid') // clean up!
-		return res.json({ msg: 'logging you out' })
+		return res.status(200).json({ msg: 'logging you out' })
 	} else {
-		return res.json({ msg: 'no user to log out!' })
+		return res.status(400).json({ msg: 'no user to log out!' })
 	}
 });
 
 // Register
-router.route('/signup').post(async(req, res) => {
-    const { username, email, password } = req.body
-	// ADD VALIDATION
-	let user = await User.findOne({ username: username }, (err, userMatch) => {
-		if (userMatch) {
-			return res.json({
-				error: "Sorry, already a user with the username: " + username
-			});
-        }
-    }); 
-    user = await User.findOne({ email: email }, (err, userMatch) => {
-		if (userMatch) {
-			return res.json({
-				error: "Email already registered!"
-			});
-        }
-    }); 
-    user = new User({
-        username: username,
-        email: email,
-        password: password
-    });
-            // const salt = bcrypt.genSalt(10);
-            // user.password = bcrypt.hash(user.password, salt);
-    user.save();
-    return res.status(200).send(user);
-});  
-    
-router.route('/:id').get(async(req,res, next) => {
-    console.log(req.params);
-    
-    if(!req.params.id) {
-        res.status(500).send('Id do usuário não informado');
-    }
+router.post('/signup', async(req, res, next) => {
+    const saltHash = utils.genPassword(req.body.password);
+
+    const salt = saltHash.salt;
+    const hash = saltHash.hash;
 
     try {
-        const user = await User.findById(req.params.id, (err, user) => {
+        const newUser = await new User({
+        username: req.body.username,
+        email: req.body.email,
+        hash: hash,
+        salt: salt,
+        });
+
+        newUser.save()
+            .then(user => {
+                const jwt = utils.issueJWT(user)
+                res.status(200).json({success: true, user: user, token: jwt.token, expiresIn: jwt.expires})
+            });
+    } catch(err) {
+        next(err);
+    }
+});
+
+// GET user pela ID    
+router.get('/:id', (req,res, next) => {
+    console.log(req.params);
+    try {
+        const user = User.findById(req.params.id, (err, user) => {
         if(err) {
             return next(err);
         } else if(!user) {
-            return res.status(400).send('user não encontrado');
+            return res.status(400).json({success: false, msg: 'user não encontrado'});
         } else {
-            return res.json(user);
+            return res.status(200).json({success: true, user: user, msg: 'User by Id'});
         }
     })} catch(err) {
         return res.status(404).send('was not possible to fetch data from the database');
     }
 });
 
-
-router.route('/:id').post(async(req,res, next) => {
-    if(!req.params.id) {
-        return res.status(500).send('Id não informado');
-    }
-    
-    await User.findById(req.params.id, (err, user) => {
+// editar user pela Id
+router.put('/:id', (req,res, next) => {
+    User.findByIdAndUpdate(req.params.id, req.body, (err, user) => {
         if(err) {
-            next(err);
+            return res.status(301).json({success: false, msg: 'user not found in Database'});
         } else if(!user) {
-            return res.status(404).send('User não encontrado')
-        }else {
-            user.total = req.body.total;
-            user.productId = req.body.productId;
-            user.category = req.body.category;
-            user.picture = req.body.picture;
-            user.price = req.body.price;
-            
-            product.save()
-                    .then(user => {
-                        res.status(200).redirect(`/${user._id}`);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    })
-    }})   
-});
-
-
-router.route('/:id').put(async(req,res, next) => {
-    if(!req.params.id) {
-        return res.status(500).send('ID não informado');
-    }
-    
-    await User.findByIdAndUpdate(req.params.id, req.body, (err, user) => {
-        if(err) {
-            return res.status(500).send('user not found in Database');
-        } else if(!user) {
-            return res.status(404).send('usero não encontrado');
+            return res.status(400).json({success: false, msg: 'Usuário não encontrado'});
         }else {
             user.save()
                     .then(user => {
-                        res.status(200).send(user);
+                        res.status(200).json({success: true, user: user, msg: 'User updated!'});
                     })
                     .catch(err => {
                         next(err);
@@ -149,15 +111,16 @@ router.route('/:id').put(async(req,res, next) => {
     }})   
 });
 
-router.route('/:id').delete(async(req,res) => {
+// deletar user pela Id
+router.delete('/:id', (req,res, next) => {
     if(!req.body) {
         return res.status(500).send('Not data informed!')
     }
-    await User.findByIdAndRemove(req.params.id, req.body, (err, user) => {
+    User.findByIdAndRemove(req.params.id, req.body, (err, user) => {
         if(err) {
-            return res.status(404).send('User not found in Database');
+            return res.status(301).json({success: false, msg: 'User not found in Database'});
         } else {
-            return res.status(200).send('User deleted sucessfully!');
+            return res.status(200).json({success: true, user: user, msg: 'User deleted sucessfully!'});
         }
     })
 });

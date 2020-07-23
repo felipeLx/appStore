@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
 import Spinner from '../../components/UI/Spinner/Spinner';
-// import api from '../../api/index';
 import * as actions from '../../store/actions/index';
 import { updateObject, checkValidity } from '../../shared/utility';
 
@@ -84,14 +83,14 @@ const signup = React.memo(props => {
 
   const submitHandler = async( event ) => {
     event.preventDefault();
-    const response = await props.onAuth(controls.username.value, controls.email.value, controls.password.value);
-    if(!response) {
-      console.log('no fetch data');
-    } else {
-      const expirationDate = new Date().getTime();
-      localStorage.setItem('token', response._id);
-      localStorage.setItem('expirationDate', expirationDate);
-      localStorage.setItem('userId', response.email);}
+
+      const response = await props.onAuth(controls.username.value, controls.email.value, controls.password.value);
+        if(!response) {
+          console.log('no fetch data');
+        } else {
+          return window.location.assign('/users/login');
+        }
+    
   };
 
   const formElementsArray = [];
@@ -145,7 +144,7 @@ const signup = React.memo(props => {
               <b>Registrar</b>
             </h4>
             <p className="grey-text text-darken-1">
-              Já tem uma conta? <Link to="/user/login">Login</Link>
+              Já tem uma conta? <Link to="/users/login">Login</Link>
             </p>
           </div>
               <form action="POST" onSubmit={submitHandler}>
