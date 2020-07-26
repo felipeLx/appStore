@@ -15,6 +15,13 @@ const orderSchema = new mongoose.Schema({
       quantity: {type: Number, require: true},
       name: {type: String, require: true},
       price: {type: Number, require: true},
+    },
+    address: {
+      street: {type: String, require: true},
+      complement: {type: String, require: true},
+      neighborhood: {type: String, require: true},
+      city: {type: String, require: true},
+      postalCode: {type: String, require: true},
     }
   });
 

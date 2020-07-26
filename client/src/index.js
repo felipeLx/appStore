@@ -12,7 +12,6 @@ import App from './App';
 import productReducer from './store/reducers/product';
 import orderReducer from './store/reducers/order';
 import authReducer from './store/reducers/auth';
-import signupReducer from './store/reducers/signup';
 
 import {watchAuth, watchProduct, watchOrder } from './store/sagas';
 
@@ -22,7 +21,6 @@ const rootReducer = combineReducers({
     product: productReducer,
     order: orderReducer,
     auth: authReducer,
-    signup: signupReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();

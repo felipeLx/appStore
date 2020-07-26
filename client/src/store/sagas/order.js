@@ -3,7 +3,8 @@ import axios from 'axios';
 import * as actions from '../actions/index';
 
 const api = axios.create({
-    baseURL: '/'
+    baseURL: '/',
+    
 });
 
 export function* purchaseProductSaga(action) {

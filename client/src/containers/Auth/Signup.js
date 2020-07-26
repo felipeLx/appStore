@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Link, Redirect } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
-import Spinner from '../../components/UI/Spinner/Spinner';
 import * as actions from '../../store/actions/index';
 import { updateObject, checkValidity } from '../../shared/utility';
 
@@ -53,15 +52,6 @@ const signup = React.memo(props => {
         touched: false
     }
   });
-
-  
-  const { buildingProduct, authRedirectPath ,onSetSignupRedirectPath } = props;
-
-  useEffect(() => {
-      if ( !buildingProduct && authRedirectPath !== '/' ) {
-        onSetSignupRedirectPath();
-      }
-  }, [buildingProduct, authRedirectPath ,onSetSignupRedirectPath]);
 
   const inputChangedHandler = ( event, controlName ) => {
   const updatedControls = updateObject( controls, {
@@ -113,27 +103,8 @@ const signup = React.memo(props => {
           changed={( event ) => inputChangedHandler( event, formElement.id )} />
   ));
 
-  if ( props.loading ) {
-      form = <Spinner />
-  }
-
-  let errorMessage = null;
-
-  if ( props.error ) {
-      errorMessage = (
-          <p>{props.error.message}</p>
-      );
-  }
-
-  let authRedirect = null;
-  if ( props.isAuthenticated ) {
-      authRedirect = <Redirect to='/' />
-  }
-
   return (
     <div className="container">
-      {authRedirect}
-      {errorMessage}
       <div style={{ marginTop: "4rem", paddingTop: "70px" }} className="row">
         <div className="col s8 offset-s2">
           <Link to="/" className="btn-flat waves-effect">
@@ -157,21 +128,10 @@ const signup = React.memo(props => {
   );
 });
 
-const mapStateToProps = state => {
-  return {
-      loading: state.signup.loading,
-      error: state.signup.error,
-      isAuthenticated: state.signup.token !== null,
-      buildingProduct: state.product.building,
-      authRedirectPath: state.signup.signupRedirectPath
-  };
-};
-
 const mapDispatchToProps = dispatch => {
   return {
       onAuth: ( username, email, password ) => dispatch( actions.signup( username, email, password ) ),
-      onSetSignupRedirectPath: () => dispatch( actions.setSignupRedirectPath( '/' ) )
   };
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( signup );
+export default connect( null, mapDispatchToProps )( signup );

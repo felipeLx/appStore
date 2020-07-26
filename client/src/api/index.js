@@ -1,8 +1,20 @@
 import axios from 'axios';
 
-const api = axios.create({
-    baseURL: '/',
-});
+let api = '';
+const token = localStorage.getItem('token');
+
+if(token){
+    api = axios.create({
+        baseURL: '/',
+        'Content-Type': 'application/json',
+        headers: {"Authorization" : `${token}`},
+    });
+} else {
+    api = axios.create({
+        baseURL: '/',
+        'Content-Type': 'application/json',
+    });
+}
 
 // Products
 export const insertProduct = async payload => await api.post('/api', payload);

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, Redirect } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
 
 import Input from '../../components/UI/Input/Input';
@@ -40,14 +40,6 @@ const login = React.memo(props => {
   }
   });
 
-  const { buildingProduct, authRedirectPath ,onSetSignupRedirectPath } = props;
-
-  useEffect(() => {
-      if ( !buildingProduct && authRedirectPath !== '/' ) {
-        onSetSignupRedirectPath();
-      }
-  }, [buildingProduct, authRedirectPath ,onSetSignupRedirectPath]);
-
   const inputChangedHandler = ( event, controlName ) => {
   const updatedControls = updateObject( controls, {
       [controlName]: updateObject( controls[controlName], {
@@ -62,14 +54,7 @@ const login = React.memo(props => {
   const submitHandler = async(event) => {
     event.preventDefault();
       try {
-        const response = await props.onLogin( controls.username.value, controls.password.value );
-        console.log(response);
-        
-        const expirationDate = new Date().getTime();
-        const token = expirationDate + response.email;
-        localStorage.setItem('token', token);
-        localStorage.setItem('expirationDate', expirationDate);
-        localStorage.setItem('userId', response.email);
+        props.onLogin( controls.username.value, controls.password.value );
       } catch(err) {
         console.log(err);
       }
@@ -99,24 +84,8 @@ const login = React.memo(props => {
     form = <Spinner />
   }
 
-  let errorMessage = null;
-
-  if ( props.error ) {
-      errorMessage = (
-          <p>{props.error.message}</p>
-      );
-  }
-
-  let authRedirect = null;
-  if ( props.isAuthenticated || props.isAdmin ) {
-      authRedirect = <Redirect to='/' />
-  }
-
   return (
     <div className="container">
-      {authRedirect}
-      {errorMessage}
-
     <div style={{ marginTop: "4rem", paddingTop: "70px" }} className="row">
       <div className="col s8 offset-s2">
         <Link to="/" className="btn-flat waves-effect">
@@ -143,18 +112,14 @@ const login = React.memo(props => {
 const mapStateToProps = state => {
   return {
       loading: state.auth.loading,
-      error: state.auth.error,
-      isAuthenticated: state.auth.token !== null || state.signup.token !== null,
-      isAdmin: state.auth.isAdmin,
-      buildingProduct: state.product.building,
-      authRedirectPath: state.signup.signupRedirectPath
+      isAuthenticated: state.auth.token !== null,
+      isAdmin: state.auth.isAdmin,  
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
       onLogin: ( username, password ) => dispatch( actions.login( username, password ) ),
-      onSetSignupRedirectPath: () => dispatch( actions.setSignupRedirectPath( '/' ) )
   };
 };
 

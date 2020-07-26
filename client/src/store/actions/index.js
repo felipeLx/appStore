@@ -5,6 +5,9 @@ export {
     setProducts,
     fetchProductsFailed,
     openDetail,
+    addToCart,
+    removeFromCart,
+    removeWholeItem
 } from './product';
 export {
     purchaseProduct,
@@ -21,15 +24,12 @@ export {
     login,
     logout,
     authCheckState,
-    setSignupRedirectPath,
     logoutSucceed,
     authStart,
     authSuccess,
     authFail,
-    checkAuthTimeout,
     signup,
     signupStart,
-    signupSuccess,
     signupFail,
     adminSuccess
 } from './auth';

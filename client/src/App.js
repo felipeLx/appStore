@@ -104,7 +104,7 @@ const app = React.memo(props => {
 
 const mapStateToProps = state => {
   return {
-    isAuthenticated: state.signup.token !== null || state.auth.token !== null,
+    isAuthenticated: state.auth.token !== null,
     isAdmin: state.auth.isAdmin
   };
 };

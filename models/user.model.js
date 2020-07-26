@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     orderId: {type: Array, require: false},
     hash: {type: String, require: true},
     salt: {type: String, require: true},
-    dateCreate: {type: Date, default: Date.now(), require: true},
+    dateCreate: {type: Date, default: new Date().getTime(), require: true},
   });
 
 // userSchema.plugin(passportLocalMongoose);

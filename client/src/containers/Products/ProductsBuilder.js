@@ -43,9 +43,13 @@ const ProductsBuilder = props => {
     const purchaseHandler = () => {
         if(props.isAuthenticated) {
             setPutchasing(true);
+            const id = event.target.id;
+            const purchased = products.filter(pr => pr._id === id);
+            onAddToCart(purchased, id);
+            
+
         } else {
-            props.onSetSignupRedirectPath('/checkout'); 
-            props.history.push('/login');
+            props.history.push('/checkout');
         }
     };
 
@@ -73,7 +77,7 @@ const ProductsBuilder = props => {
         products.forEach(prd => {
             productArray.push(    
                  
-                <Card.Body key={prd._id} style={{textAlign: 'center'}}>
+                <div key={prd._id}  style={{textAlign:'center', padding: '10px'}}>
                  
                 <Aux>
                     <Product 
@@ -94,10 +98,11 @@ const ProductsBuilder = props => {
                         purchasable={prd._id}
                         total={prd.price * quantity}
                         isAuth={props.isAuthenticated}
+                        id={prd._id}
                         ordered={purchaseHandler}
                     />
                 </Aux>
-                </Card.Body>
+                </div>
                 
             )
             
@@ -106,6 +111,7 @@ const ProductsBuilder = props => {
                 <OrderSummary 
                     products={prd._id}
                     name={prd.name}
+                    userId={props.userId}
                     total={prd.price * quantity}
                     purchaseCancelled={purchaseCancelHandler}
                     purchaseContinued={purchaseContinueHandler} />;
@@ -114,12 +120,12 @@ const ProductsBuilder = props => {
         })
     };
 
-        return (
+        return ( 
             <Aux>
                 <Modal show={purchasing} modalClosed={purchaseCancelHandler}>
                     {orderSummary}
                 </Modal>
-                <div className='row row-sm-6'>
+                <div className='row row-sm-4 row-lg-8' style={{alignItems: 'center'}}>
                     {productArray}
                 </div>
             </Aux>
@@ -129,7 +135,8 @@ const ProductsBuilder = props => {
 const mapStateToProps = state => {
     return {
         error: state.product.error,
-        isAuthenticated: state.auth.token !== null || state.signup.token !== null,
+        isAuthenticated: state.auth.token !== null,
+        userId: state.auth.userId
     };
 };
 
@@ -137,7 +144,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onInitProducts: () => dispatch(actions.initProducts()),
         onInitPurchase:  () => dispatch(actions.purchaseInit()),
-        onSetSignupRedirectPath: (path) => dispatch(actions.setSignupRedirectPath(path)),
+        onAddToCart: (item, i) => dispatch(actions.addToCart(item, i))
     };
 };
 

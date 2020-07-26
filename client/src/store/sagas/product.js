@@ -3,10 +3,22 @@ import axios from 'axios';
 
 import * as actions from '../actions/index';
 
-const api = axios.create({
-    baseURL: '/',
-});
+let api = '';
+const token = localStorage.getItem('token');
 
+if(token){
+    api = axios.create({
+        baseURL: '/api',
+        'Content-Type': 'application/json',
+        headers: {"Authorization" : `${token}`},
+    });
+} else {
+    api = axios.create({
+        baseURL: '/api',
+        'Content-Type': 'application/json',
+    });
+}
+               
 export function* initProductsSaga(action) {
     try{
         const response = yield api.get( '/api' );

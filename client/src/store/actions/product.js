@@ -1,6 +1,22 @@
 import * as actionTypes from './actionTypes';
 
 
+export const addToCart = (item, i) => ({
+    type: actionTypes.ADD_TO_CART,
+    payload: item,
+    index: i
+  });
+  
+  export const removeFromCart = item => ({
+    type: actionTypes.REMOVE_FROM_CART,
+    payload: item
+  });
+  
+  export const removeWholeItem = item => ({
+    type: actionTypes.REMOVE_WHOLE_ITEM,
+    payload: item
+  })
+
 export const addProduct = ( name ) => {
     return {
         type: actionTypes.ADD_PRODUCT,

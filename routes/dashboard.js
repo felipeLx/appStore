@@ -1,24 +1,25 @@
 const express = require('express');
+const passport = require('passport');
 const router = express.Router();
 
 const User = require('../models/user.model');
 const Product = require('../models/product.model');
 const Order = require('../models/order.model');
 
-router.route('/user').get(async(req,res) => {
+router.get('/user', passport.authenticate('jwt', {session: false}), async(req,res, next) => {
     
     await User.find({}, (err, users) => {
         if(users.length === 0) {
-            res.status(200).send('Good request, but don`t have data to show');
+            res.status(200).json({success: false, msg:'Good request, but don`t have data to show'});
         } else if(err) {
-            res.status(404).send(err);
+            res.status(404).json({success: false, msg: err});
         } else {
-            res.status(200).send(users);
+            res.status(200).json({success: true, user: users, msg: 'Get all users!'});
         }
     })
 });
 
-router.route('/api').get(async(req,res) => {
+router.get('/api', passport.authenticate('jwt', {session: false}), async(req,res, next) => {
     
     await Product.find({}, (err, products) => {
         if(products.length === 0) {
@@ -31,8 +32,7 @@ router.route('/api').get(async(req,res) => {
     })
 });
 
-router.route('/api').post(async(req,res) => {
-    console.log(req.body);
+router.post('/api', passport.authenticate('jwt', {session: false}), async(req,res) => {
     const { name, brand, quantity, price, description, picture, category  } = req.body;
     
         let newProduct = await Product.findOne({name: name}, (err, prdMatch) => {
@@ -57,7 +57,7 @@ router.route('/api').post(async(req,res) => {
 
 });
 
-router.route('/order').get(async(req,res) => {
+router.get('/order', passport.authenticate('jwt', {session: false}), async(req,res) => {
     
     await Order.find({}, (err, orders) => {
         if(orders.length === 0) {

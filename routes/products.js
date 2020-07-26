@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const passport = require('passport');
 const Product = require('../models/product.model');
 const { response } = require('express');
 
@@ -20,7 +20,7 @@ router.get("/", (req,res, next) => {
     }
 });
 
-router.post("/", (req,res, next) => {
+router.post("/", passport.authenticate('jwt', {session: false}), (req,res, next) => {
     const { name, brand, quantity, price, description, picture, category  } = req.body;
     
         let newProduct = Product.findOne({name: name}, (err, prdMatch) => {
@@ -44,9 +44,9 @@ router.post("/", (req,res, next) => {
 
 });
 
-router.get("/:id", (req,res, next) => {
+router.get("/:id", passport.authenticate('jwt', {session: false}), (req,res, next) => {
     try {
-        const product = Product.findById(req.params.id, (err, product) => {
+        Product.findById(req.params.id, (err, product) => {
             if(err) {
             return next(err);
             } else if(!product) {
@@ -59,7 +59,7 @@ router.get("/:id", (req,res, next) => {
     }
 });
 
-router.put('/:id', (req,res, next) => {
+router.put('/:id', passport.authenticate('jwt', {session: false}), (req,res, next) => {
 
     try {
         Product.findByIdAndUpdate(req.params.id, req.body, (err, product) => {
@@ -80,7 +80,7 @@ router.put('/:id', (req,res, next) => {
     }
 });
 
-router.delete('/:id', (req,res) => {
+router.delete('/:id', passport.authenticate('jwt', {session: false}),  (req,res) => {
    
     try {
         Product.findByIdAndRemove(req.params.id, req.body, (err, product) => {
@@ -94,7 +94,7 @@ router.delete('/:id', (req,res) => {
     }
 });
 
-router.post('/photo',(req,res) => {
+router.post('/photo', passport.authenticate('jwt', {session: false}), (req,res) => {
     console.log('photo upload');
     
     var newItem = new Item();

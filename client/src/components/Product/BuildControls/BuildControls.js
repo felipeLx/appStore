@@ -1,14 +1,13 @@
 import React from 'react';
 
-import classes from './BuildControls.module.css';
 import BuildControl from './BuildControl/BuildControl';
-
+import Button from '../../UI/Button/Button';
 const controls = [
     { label: '' }
 ];
 
 const buildControls = (props) => (
-    <div>
+    <div style={{padding: '10px'}}>
         {controls.map(ctrl => (
             <BuildControl 
                 key={ctrl.label} 
@@ -19,10 +18,10 @@ const buildControls = (props) => (
                 disabled={props.purchasable} 
             />
         ))}
-        <button 
-            className={classes.OrderButton}
+        <Button 
+            className='btn btn-warning'
             disabled={!props.purchasable}
-            onClick={props.ordered}>{props.isAuth ? 'ORDER NOW' : 'SIGN UP TO ORDER'}</button>
+            onClick={props.ordered}>{props.isAuth ? 'ADICIONE AO CARRINHO' : 'LOGIN PARA COMPRAS'}</Button> 
     </div>
 );
 
