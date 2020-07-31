@@ -1,21 +1,35 @@
 import * as actionTypes from './actionTypes';
 
 
-export const addToCart = (item, i) => ({
-    type: actionTypes.ADD_TO_CART,
-    payload: item,
-    index: i
-  });
+export const addToCart = (id, val) => {
+   return {
+       type: actionTypes.ADD_TO_CART,
+        id,
+        up: val
+    }
+};
   
-  export const removeFromCart = item => ({
-    type: actionTypes.REMOVE_FROM_CART,
-    payload: item
-  });
+export const removeToCart = (id, val) => {
+    return{
+        type: actionTypes.REMOVE_FROM_CART,
+        id,
+        down: val
+    }
+};
   
-  export const removeWholeItem = item => ({
-    type: actionTypes.REMOVE_WHOLE_ITEM,
-    payload: item
-  })
+export const removeWholeItem = id => {
+    return{
+        type: actionTypes.REMOVE_WHOLE_ITEM,
+        payload: id
+    }
+};
+
+export const puchase = cart => {
+    return {
+        type: actionTypes.PURCHASE,
+        cart,
+    }
+}
 
 export const addProduct = ( name ) => {
     return {

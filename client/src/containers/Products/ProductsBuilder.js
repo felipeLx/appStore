@@ -13,8 +13,13 @@ import api from '../../api';
 const ProductsBuilder = props => {
 
     const [products, setProducts] = useState([]);
-    const [purchasing, setPutchasing] = useState(false);
-    const [quantity, setQuantity] = useState(0);
+    const [purchasing, setPurchasing] = useState(false);
+    const [fullingCart, setFullingCart] = useState(false);
+    const [cartSetup, setCartSetup] = useState({});
+    const [tempQuantity, setTempQuantity] = useState([{
+        id: '',
+        quantity: 0
+    }]);
 
     useEffect(() => {
         getAllProducts();
@@ -40,21 +45,21 @@ const ProductsBuilder = props => {
     //     return sum > 0;
     // };
 
-    const purchaseHandler = () => {
+    const purchaseHandler = (event) => {
         if(props.isAuthenticated) {
-            setPutchasing(true);
+            setPurchasing(true);
             const id = event.target.id;
-            const purchased = products.filter(pr => pr._id === id);
-            onAddToCart(purchased, id);
+            const purchased = cartSetup.filter(pr => pr.productId === id);
+            props.onAddToCart(purchased, id);
             
 
         } else {
-            props.history.push('/checkout');
+            props.history.push('/users/login');
         }
     };
 
     const purchaseCancelHandler = () => {
-        setPutchasing(false);
+        setPurchasing(false);
     };
 
     const purchaseContinueHandler = () => {
@@ -65,17 +70,37 @@ const ProductsBuilder = props => {
     let productArray = [];
     let orderSummary = [];
 
-    const productAdd = () => {
-        setQuantity(quantity + 1)
+    const productAdd = (event) => {
+        event.preventDefault();
+        setFullingCart(true);
+        const idToUpdate = evenfullingCartt.target.id;
+        props.onAdd(idToUpdate, 1);
+    };  
+
+    const productRemove = (event) => {
+        event.preventDefault();
+        const idToUpdate = event.target.id;
+        props.onRemove(idToUpdate, 1);
     };
 
-    const productRemove = () => {
-        setQuantity(quantity -1);
-    }
-
+    
+    
     if ( products.length > 0 ) {
-        products.forEach(prd => {
-            productArray.push(    
+        productArray = products.map(prd => {
+            const controls = (
+                <div>
+                    <button id={prd._id} type='button' onClick={productRemove}>-</button>
+                    <button id={prd._id} type='button' onClick={productAdd}>+</button>                                              
+                </div>
+            );
+            orderSummary = <OrderSummary 
+                    products={prd._id}
+                    name={prd.name}
+                    userId={props.userId}
+                    total={prd.price * 1}
+                    purchaseCancelled={purchaseCancelHandler}
+                    purchaseContinued={purchaseContinueHandler} />
+            return(     
                  
                 <div key={prd._id}  style={{textAlign:'center', padding: '10px'}}>
                  
@@ -89,36 +114,33 @@ const ProductsBuilder = props => {
                         category={prd.category}
                         picture={prd.picture}
                     />
+                   {controls}
+                    
                     <BuildControls 
-                        productAdded={productAdd}
-                        productRemoved={productRemove}
-                        quantity={quantity}
                         disabled={prd._id}
                         name = {prd.name}
                         purchasable={prd._id}
-                        total={prd.price * quantity}
                         isAuth={props.isAuthenticated}
                         id={prd._id}
                         ordered={purchaseHandler}
                     />
                 </Aux>
                 </div>
+                )
                 
-            )
-            
-            orderSummary.push(
-                <div key={prd._id}>
-                <OrderSummary 
-                    products={prd._id}
-                    name={prd.name}
-                    userId={props.userId}
-                    total={prd.price * quantity}
-                    purchaseCancelled={purchaseCancelHandler}
-                    purchaseContinued={purchaseContinueHandler} />;
-                </div>
-            );
-        })
+                    
+            });
     };
+    
+    if(fullingCart) {
+        const prCart = props.prQuantity;
+        return (
+            <div>
+                <div><p>Quantidade: <strong>{prCart.quantity}</strong></p></div>
+                <div><p>Total: <strong>R$ 0</strong></p></div>
+            </div> 
+        )
+    }
 
         return ( 
             <Aux>
@@ -127,6 +149,7 @@ const ProductsBuilder = props => {
                 </Modal>
                 <div className='row row-sm-4 row-lg-8' style={{alignItems: 'center'}}>
                     {productArray}
+                     
                 </div>
             </Aux>
         );
@@ -136,7 +159,8 @@ const mapStateToProps = state => {
     return {
         error: state.product.error,
         isAuthenticated: state.auth.token !== null,
-        userId: state.auth.userId
+        userId: state.auth.userId,
+        prQuantity: state.product.quantityPerId
     };
 };
 
@@ -144,7 +168,8 @@ const mapDispatchToProps = dispatch => {
     return {
         onInitProducts: () => dispatch(actions.initProducts()),
         onInitPurchase:  () => dispatch(actions.purchaseInit()),
-        onAddToCart: (item, i) => dispatch(actions.addToCart(item, i))
+        onAdd: (id, val) => dispatch(actions.addToCart(id, val)),
+        onRemove: (id, val) => dispatch(actions.removeToCart(id, val)),
     };
 };
 

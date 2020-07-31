@@ -2,9 +2,12 @@ import React from 'react';
 
 import classes from './BuildControl.module.css';
 
-const buildControl = (props) => (
+const buildControl = (props) => {
+    const {products} = props;
+    // console.log(products); 
+    return (
     <div>
-        <button 
+        {/* <button 
             className={classes.Less} 
             onClick={props.removed} 
             disabled={props.disabled}>-</button>
@@ -18,8 +21,9 @@ const buildControl = (props) => (
             <div>
                 <p><strong>Total: R$ {props.total.toFixed(2)}</strong></p>
             </div>
-        </div>
+        </div> */}
     </div>
-);
+    )
+    };
 
 export default buildControl;

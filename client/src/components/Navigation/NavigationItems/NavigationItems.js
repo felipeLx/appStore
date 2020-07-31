@@ -12,7 +12,7 @@ import NavigationItem from './NavigationItem/NavigationItem';
 // };
 
 const navigationItems = (props) => {
-    console.log(props.cart);
+    console.log(`Props Cart: ${props.cart}`);
     return(
         <ul className={classes.navigationItems}>
             <NavigationItem link="/api" exact>Produtos</NavigationItem>

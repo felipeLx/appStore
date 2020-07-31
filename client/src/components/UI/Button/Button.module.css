@@ -12,7 +12,7 @@
 
 .Button:first-of-type {
     margin-left: 0;
-    padding-left: 0;
+    padding-left: 10;
 }
 
 .Button:disabled {
@@ -26,4 +26,10 @@
 
 .Danger {
     color: #7c0a23;
+}
+
+.Warning {
+    color: #ecdf22;
+    background-color: cornflowerblue;
+    padding: 10px;
 }

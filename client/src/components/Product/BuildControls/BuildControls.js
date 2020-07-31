@@ -2,6 +2,7 @@ import React from 'react';
 
 import BuildControl from './BuildControl/BuildControl';
 import Button from '../../UI/Button/Button';
+
 const controls = [
     { label: '' }
 ];
@@ -11,17 +12,17 @@ const buildControls = (props) => (
         {controls.map(ctrl => (
             <BuildControl 
                 key={ctrl.label} 
-                added={() => props.productAdded(ctrl.type)}
-                removed={() => props.productRemoved(ctrl.type)}
-                quantity={props.quantity}
-                total={props.total}
+                // added={() => props.productAdded(ctrl.type)}
+                // removed={() => props.productRemoved(ctrl.type)}
+                // quantity={props.quantity}
+                // total={props.total}
                 disabled={props.purchasable} 
             />
         ))}
         <Button 
-            className='btn btn-warning'
+            btnType="Warning"
             disabled={!props.purchasable}
-            onClick={props.ordered}>{props.isAuth ? 'ADICIONE AO CARRINHO' : 'LOGIN PARA COMPRAS'}</Button> 
+            onClick={props.ordered}>{props.isAuth ? ' ADICIONE AO CARRINHO' : ' LOGIN PARA COMPRAS'}</Button> 
     </div>
 );
 

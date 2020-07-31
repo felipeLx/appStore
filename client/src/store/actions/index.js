@@ -6,8 +6,9 @@ export {
     fetchProductsFailed,
     openDetail,
     addToCart,
-    removeFromCart,
-    removeWholeItem
+    removeToCart,
+    removeWholeItem,
+    puchase
 } from './product';
 export {
     purchaseProduct,
