@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 
 import BuildControl from './BuildControl/BuildControl';
 import Button from '../../UI/Button/Button';
@@ -9,13 +10,13 @@ const controls = [
 
 const buildControls = (props) => (
     <div style={{padding: '10px'}}>
-        {controls.map(ctrl => (
+        {controls.map(pr => (
             <BuildControl 
-                key={ctrl.label} 
+                key={props.id} 
                 // added={() => props.productAdded(ctrl.type)}
                 // removed={() => props.productRemoved(ctrl.type)}
-                // quantity={props.quantity}
-                // total={props.total}
+                quantity={props.quantity}
+                total={props.total}
                 disabled={props.purchasable} 
             />
         ))}

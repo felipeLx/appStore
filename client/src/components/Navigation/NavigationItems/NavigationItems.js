@@ -19,6 +19,9 @@ const navigationItems = (props) => {
             {props.isAuthenticated && !props.isAdmin
                 ? <NavigationItem link="/dashboard">Dashboard</NavigationItem>
                 : null }
+            {props.isAuthenticated && !props.isAdmin
+                ? <NavigationItem link={`/orders/${props.userId}`}>Seu Carrinho</NavigationItem>
+                : null }
             {props.isAdmin && props.isAuthenticated
                 ? <NavigationItem link="/dashboard">Dashboard</NavigationItem>
                 : null}
@@ -41,7 +44,7 @@ const navigationItems = (props) => {
 };
 
 const mapStateToProps = state => ({
-    cart: state.product.products
+    userId: state.auth.userId
   });
 
 export default connect(mapStateToProps)(navigationItems); 

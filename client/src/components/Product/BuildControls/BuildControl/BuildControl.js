@@ -3,8 +3,9 @@ import React from 'react';
 import classes from './BuildControl.module.css';
 
 const buildControl = (props) => {
-    const {products} = props;
-    // console.log(products); 
+    // console.log(props);
+    const { total,quantity, disabled } = props;
+
     return (
     <div>
         {/* <button 
@@ -14,14 +15,16 @@ const buildControl = (props) => {
         <button 
             className={classes.More} 
             onClick={props.added}>+</button>
+        */}
         <div className={classes.DinamicFields}>
             <div>
-                <p><strong>Quantidade: {props.quantity}</strong></p>
+                <p><strong>Quantidade: {quantity}</strong></p>
             </div>
             <div>
-                <p><strong>Total: R$ {props.total.toFixed(2)}</strong></p>
+                <p><strong>Total: R$ {total}</strong></p>
             </div>
-        </div> */}
+        </div> 
+        
     </div>
     )
     };

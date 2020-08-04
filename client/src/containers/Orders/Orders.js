@@ -7,10 +7,6 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../store/actions/index';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
-const api = axios.create({
-    baseURL: '/'
-});
-
 const Orders = props => {
     const {token, userId, onFetchOrders} = props;
     useEffect(() => {
@@ -48,4 +44,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( withErrorHandler( Orders, api ) );
+export default connect( mapStateToProps, mapDispatchToProps )( withErrorHandler( Orders, axios ) );

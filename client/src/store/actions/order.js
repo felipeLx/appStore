@@ -8,6 +8,15 @@ export const purchaseProductSuccess = ( id, orderData ) => {
     };
 };
 
+export const addItemToOrder = ( id, orderData, userId ) => {
+    return {
+        type: actionTypes.PURCHASE_PRODUCT,
+        orderId: id,
+        orderData: orderData,
+        userId: userId
+    };
+};
+
 export const purchaseProductFail = ( error ) => {
     return {
         type: actionTypes.PURCHASE_PRODUCT_FAIL,

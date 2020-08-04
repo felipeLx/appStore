@@ -19,7 +19,8 @@ export {
     purchaseProductFail,
     fetchOrdersSuccess,
     fetchOrdersFail,
-    fetchOrdersStart
+    fetchOrdersStart,
+    addItemToOrder
 } from './order';
 export {
     login,

@@ -24,7 +24,8 @@ export const PURCHASE = 'PURCHASE';
 export const FETCH_ORDERS_START = 'FETCH_ORDERS_START';
 export const FETCH_ORDERS_SUCCESS = 'FETCH_ORDERS_SUCCESS';
 export const FETCH_ORDERS_FAIL = 'FETCH_ORDERS_FAIL';
-export const FETCH_ORDERS = 'FETCH_ORDERS'
+export const FETCH_ORDERS = 'FETCH_ORDERS';
+export const ADD_ITEM = 'ADD_ITEM';
 
 // users login
 export const AUTH_USER = 'AUTH_USER';

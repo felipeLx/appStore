@@ -58,10 +58,8 @@ const fetchProductsFailed = (state, action) => {
 
 
 const addToCart = (state, action) => {
-    let itemFound = '';
-    let index = '';
     if(state.quantityPerId.length > 0) {
-        itemFound = state.quantityPerId.map(item => {
+        state.quantityPerId.map(item => {
             if(item.id === action.id) {
                 item.quantity += action.up;
                 }})

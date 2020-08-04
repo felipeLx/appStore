@@ -7,6 +7,8 @@ const initialState = {
     purchased: false,
 };
 
+
+
 const purchaseInit = ( state, action ) => {
     return updateObject( state, { purchased: false } );
 };
@@ -17,6 +19,15 @@ const purchaseProductStart = ( state, action ) => {
 
 const purchaseProductSuccess = ( state, action ) => {
     const newOrder = updateObject( action.orderData, { id: action._id } );
+    return updateObject( state, {
+        loading: false,
+        purchased: true,
+        orders: state.orders.concat( newOrder )
+    } );
+};
+
+const addItemToOrder = ( state, action ) => {
+    const newOrder = updateObject( action.orderData, {userId: action.userId} );
     return updateObject( state, {
         loading: false,
         purchased: true,
@@ -52,6 +63,8 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.FETCH_ORDERS_START: return fetchOrdersStart( state, action );
         case actionTypes.FETCH_ORDERS_SUCCESS: return fetchOrdersSuccess( state, action );
         case actionTypes.FETCH_ORDERS_FAIL: return fetchOrdersFail( state, action );
+        case actionTypes.ADD_ITEM: return addItemToOrder( state, action );
+        
         default: return state;
     }
 };
