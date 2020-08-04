@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const utils = require('../lib/utils');
 
 const Order = require('../models/order.model');
 const Product = require('../models/product.model');
@@ -18,46 +19,42 @@ router.get("/", passport.authenticate('jwt', {session: false}), (req,res, next) 
     })
 });
 
-router.post("/", passport.authenticate('jwt', {session: false}), (req,res) => {
-    const {userId, productId, quantity, price, name,total} = req.body;
+router.post("/", passport.authenticate('jwt', {session: false}), (req,res, next) => {
+    const {_id, rating, isertTime, name, brand, quantity, price, picture, description, category} = req.body.product[0];
+    const { userId, qty, total } = req.body;
     try{
         let order = new Order({
             total,
-            _id: userId,
-            product: {
-                _id: productId,
+            userId,
+            products: {
+                _id,
                 name,
                 price,
-                quantity,
+                qty,
             }
-        });    
-        order.save()
-                .then(ord => {
-                    res.json(ord);
-                });   
+        });
+        order.save();  
         
-        Product.findByIdAndUpdate(productId, {quantity: -quantity}, {new: true})
+        Product.findByIdAndUpdate(_id, {quantity: -qty}, {new: true});
     } catch(err) {
-        return res.json(err);
+        return res.status(400).json(err);
     }
-
-
 });
 
 router.get("/:id", passport.authenticate('jwt', {session: false}), (req,res, next) => {
 
-    const {id} = req.params.id;
+    const id = req.params.id;
     try{
-        Order.findById(id, (err, order) => {
+        Order.find({userId: id}, (err, order) => {
         if(err) {
             return next(err);
         } else if(!order) {
-            return res.status(500).send('order não encontrado')
+            return res.status(500).send('order não encontrado');
         } else {
-            return res.json(order);
+            return res.status(200).json({success: true, order: order });
         }
     })} catch(err) {
-        return res.json(err);
+        return res.status(400).json(err);
     }
 });
 

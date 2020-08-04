@@ -69,71 +69,44 @@ const ProductsBuilder = props => {
     //     props.onRemove(idToUpdate, 1);
     // };
 
+    const addToCart = (event) => {
+        event.preventDefault();
+        let prId = event.target.id.toString();
+        let userId = localStorage.getItem('userId');
+        let product = products.filter(p => p._id === prId);
+        return props.onAddToOrder({product: product}, userId);
+    };
     
-    
-
-    productArray = products.map(prd => {
-        const addToCart = (event) => {
-            event.preventDefault();
-            props.onAddToOrder(prd._id, prd);
-        };
-        // const controls = (
-        //     <div>
-        //         <button type='button' onClick={handleSubtractQuantity(prd._id)}>-</button>
-        //         <button type='button' onClick={handleAddQuantity(prd._id)}>+</button>   
-        //         <button className="waves-effect waves-light btn pink remove" onClick={handleRemove(prd._id)}>Remove</button>                                           
-        //     </div>
-        // );
-        
-        // orderSummary = <OrderSummary 
-        //         products={prd._id}
-        //         name={prd.name}
-        //         userId={props.userId}
-        //         // quantity = {res.qty}
-        //         // total={res.total}
-        //         purchaseCancelled={purchaseCancelHandler}
-        //         purchaseContinued={purchaseContinueHandler} />
-           
-        return(          
-            <div key={prd._id}  style={{textAlign:'center', padding: '10px'}}>
+    if(products.length > 0){
+        productArray = products.map(prd => {
+            return(          
+                <div key={prd._id}  style={{textAlign:'center', padding: '10px'}}>
+                    
+                <Aux>
+                    <Product 
+                        id={prd._id}
+                        name={prd.name}
+                        brand={prd.brand}
+                        price={prd.price}
+                        description={prd.description}
+                        category={prd.category}
+                        picture={prd.picture}
+                    />
                 
-            {/* <Aux> */}
-                <Product 
-                    id={prd._id}
-                    name={prd.name}
-                    brand={prd.brand}
-                    price={prd.price}
-                    description={prd.description}
-                    category={prd.category}
-                    picture={prd.picture}
-                />
-                
-                
-                {/* <BuildControls 
-                            disabled={prd._id}
-                            name = {prd.name}
-                            purchasable={prd._id}
-                            isAuth={props.isAuthenticated}
-                            id={prd._id}
-                            ordered={purchaseHandler}
-                            // quantity = {res.qty}
-                            // total={res.total}
-                        /> */}
-            {/* </Aux> */}
-            <button type="button" onClick={addToCart}>+</button>
-            </div>
-            )                
-        });
-
-    
-        return ( 
-            <Aux>
-                
-                <div className='row row-sm-4 row-lg-8' style={{alignItems: 'center'}}>
-                    {productArray}
+                <button id={prd._id} type="button" onClick={addToCart}>+</button>
+                </Aux>
                 </div>
-            </Aux>
-        );
+                )                
+            });
+    }
+
+    return ( 
+        <Aux>            
+            <div className='row row-sm-4 row-lg-8' style={{alignItems: 'center'}}>
+                {productArray}
+            </div>
+        </Aux>
+    );
 };
 
 const mapStateToProps = state => {
@@ -150,7 +123,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onInitProducts: () => dispatch(actions.initProducts()),
         onInitPurchase:  () => dispatch(actions.purchaseInit()),
-        onAddToOrder: (id, data, userId) => dispatch(actions.addItemToOrder(id, data, userId)),
+        onAddToOrder: (orderData, userId) => dispatch(actions.addItemToOrder(orderData, userId)),
         removeItem: (id)=> dispatch(actions.removeWholeItem(id)),
         addQuantity: (id, val)=> dispatch(actions.addToCart(id, val)),
         subtractQuantity: (id, val)=> dispatch(actions.removeToCart(id, val))

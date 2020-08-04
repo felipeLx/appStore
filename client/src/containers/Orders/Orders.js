@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import Order from '../../components/Order/Order';
@@ -8,23 +8,35 @@ import * as actions from '../../store/actions/index';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
 const Orders = props => {
-    const {token, userId, onFetchOrders} = props;
+    const {userId} = props;
+
     useEffect(() => {
-        onFetchOrders(token, userId);
-    },[onFetchOrders, token, userId]);
+        showOrderFromUser(userId)
+    },);
     
+    const showOrderFromUser = async(userId) => {
+        try{
+            await props.onFetchOrders(userId);
+        } catch(err) {
+            console.log(err);
+        }
+    };
+
         let orders = <Spinner />;
-        if ( !props.loading ) {
+        if ( props.orders.length > 0 ) {
             orders = props.orders.map( order => (
                 <Order
-                    key={order.id}
+                    key={order._id}
                     products={order.products}
-                    price={order.price} />
-            ) )
+                    total = {order.total}
+                    userId = {order.userId}
+                 />
+             ))
         }
         return (
             <div>
                 {orders}
+                
             </div>
         );
 }
@@ -33,14 +45,13 @@ const mapStateToProps = state => {
     return {
         orders: state.order.orders,
         loading: state.order.loading,
-        token: state.auth.token || state.sigunp.token,
         userId: state.auth.userId|| state.sigunp.userId
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onFetchOrders: (token, userId) => dispatch( actions.fetchOrders(token, userId) )
+        onFetchOrders: (userId) => dispatch( actions.fetchOrders(userId) )
     };
 };
 

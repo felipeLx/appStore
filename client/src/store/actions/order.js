@@ -4,23 +4,25 @@ export const purchaseProductSuccess = ( id, orderData ) => {
     return {
         type: actionTypes.PURCHASE_PRODUCT_SUCCESS,
         orderId: id,
-        orderData: orderData
+        orderData,
     };
 };
 
-export const addItemToOrder = ( id, orderData, userId ) => {
+export const addItemToOrder = ( orderData, userId ) => {
+    const total = orderData.product[0].price;
+    const complement = {total: total, userId: userId, qty: 1 };
+    const orderDataComplete = {...orderData, ...complement};
     return {
         type: actionTypes.PURCHASE_PRODUCT,
-        orderId: id,
-        orderData: orderData,
-        userId: userId
+        orderId: userId,
+        orderData: orderDataComplete,
     };
 };
 
 export const purchaseProductFail = ( error ) => {
     return {
         type: actionTypes.PURCHASE_PRODUCT_FAIL,
-        error: error
+        error,
     };
 }
 
@@ -33,8 +35,8 @@ export const purchaseProductStart = () => {
 export const purchaseProduct = ( orderData, token ) => {
     return {
         type: actionTypes.PURCHASE_PRODUCT,
-        orderData: orderData,
-        token: token
+        orderData,
+        token,
     }
 };
 
@@ -47,7 +49,7 @@ export const purchaseInit = () => {
 export const fetchOrdersSuccess = ( orders ) => {
     return {
         type: actionTypes.FETCH_ORDERS_SUCCESS,
-        orders: orders
+        orders,
     };
 };
 
@@ -64,10 +66,9 @@ export const fetchOrdersStart = () => {
     };
 };
 
-export const fetchOrders = (token, userId) => {
+export const fetchOrders = (userId) => {
     return {
         type: actionTypes.FETCH_ORDERS,
-        token: token,
-        userId: userId
+        userId,
     }
 };

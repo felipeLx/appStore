@@ -68,8 +68,9 @@ router.post('/signup', async(req, res, next) => {
 
         await newUser.save()
             .then(user => {
+                // console.log(user);
                 const jwt = utils.issueJWT(user);
-                console.log('jwt: ' + jwt);
+                // console.log('jwt: ' + jwt);
                 return res.status(200).json({success: true, user: user, token: jwt.token, expiresIn: jwt.expires})
             });
     } catch(err) {

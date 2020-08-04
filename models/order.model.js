@@ -7,12 +7,12 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 
 const orderSchema = new mongoose.Schema({
-    total: {type: String, require: true},
+    total: {type: Number, require: true},
     userId: {type: String, require: true},
     modifiedOn: {type: Date, required: true, default: new Date().getTime()},
     products: {
       _id:{type: String, require: true},
-      quantity: {type: Number, require: true},
+      qty: {type: Number, require: true},
       name: {type: String, require: true},
       price: {type: Number, require: true},
     },

@@ -27,6 +27,7 @@ const purchaseProductSuccess = ( state, action ) => {
 };
 
 const addItemToOrder = ( state, action ) => {
+    console.log(action);
     const newOrder = updateObject( action.orderData, {userId: action.userId} );
     return updateObject( state, {
         loading: false,
