@@ -72,3 +72,26 @@ export const fetchOrders = (userId) => {
         userId,
     }
 };
+
+export const addToCart = (id, val) => {
+    return {
+        type: actionTypes.ADD_TO_CART,
+         id,
+         up: val
+     }
+ };
+   
+ export const removeToCart = (id, val) => {
+     return{
+         type: actionTypes.REMOVE_FROM_CART,
+         id,
+         down: val
+     }
+ };
+
+ export const removeWholeItem = id => {
+    return{
+        type: actionTypes.REMOVE_WHOLE_ITEM,
+        id,
+    }
+};

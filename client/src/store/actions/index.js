@@ -5,9 +5,6 @@ export {
     setProducts,
     fetchProductsFailed,
     openDetail,
-    addToCart,
-    removeToCart,
-    removeWholeItem,
     puchase
 } from './product';
 export {
@@ -20,7 +17,10 @@ export {
     fetchOrdersSuccess,
     fetchOrdersFail,
     fetchOrdersStart,
-    addItemToOrder
+    addItemToOrder,
+    addToCart,
+    removeToCart,
+    removeWholeItem
 } from './order';
 export {
     login,

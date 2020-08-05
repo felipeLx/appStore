@@ -124,9 +124,6 @@ const mapDispatchToProps = dispatch => {
         onInitProducts: () => dispatch(actions.initProducts()),
         onInitPurchase:  () => dispatch(actions.purchaseInit()),
         onAddToOrder: (orderData, userId) => dispatch(actions.addItemToOrder(orderData, userId)),
-        removeItem: (id)=> dispatch(actions.removeWholeItem(id)),
-        addQuantity: (id, val)=> dispatch(actions.addToCart(id, val)),
-        subtractQuantity: (id, val)=> dispatch(actions.removeToCart(id, val))
     };
 };
 

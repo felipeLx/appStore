@@ -11,8 +11,8 @@ const Orders = props => {
     const {userId} = props;
 
     useEffect(() => {
-        showOrderFromUser(userId)
-    },);
+        showOrderFromUser(userId);
+    },[]);
     
     const showOrderFromUser = async(userId) => {
         try{
@@ -24,17 +24,12 @@ const Orders = props => {
 
         let orders = <Spinner />;
         if ( props.orders.length > 0 ) {
-            orders = props.orders.map( order => (
-                <Order
-                    key={order._id}
-                    products={order.products}
-                    total = {order.total}
-                    userId = {order.userId}
-                 />
-             ))
+            const productsArray = [...props.orders];
+            orders = <Order
+                        products={productsArray}/>
         }
         return (
-            <div>
+            <div className='container'>
                 {orders}
                 
             </div>

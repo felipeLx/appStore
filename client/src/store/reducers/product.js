@@ -55,39 +55,6 @@ const fetchProductsFailed = (state, action) => {
     return updateObject( state, { error: true } );
 };
 
-
-
-const addToCart = (state, action) => {
-    if(state.quantityPerId.length > 0) {
-        state.quantityPerId.map(item => {
-            if(item.id === action.id) {
-                item.quantity += action.up;
-                }})
-    } else {
-        state.quantityPerId.push({ id: action.id, quantity: action.up})
-    }
-    return updateObject(state, {});
-} 
-  
-const removeToCart = (state, action) => {
-    if(state.quantityPerId.length > 0) {
-        state.quantityPerId.map((item, index) => {
-            if(item.id === action.id && item.quantity >= 0) {
-                item.quantity -= action.down;
-            } 
-            if(item.quantity === 0) {
-                removeWholeItem(state, index);
-            }
-        })
-    } 
-    return updateObject(state, {});
-};
-
-const removeWholeItem = (state, index) => {
-    state.quantityPerId.splice(index, 1);
-    return updateObject(state, {quantityPerId: {}})
-};
-
 const purchase = (state, action) => {
     const ids = action.cart.map(item => item.id);
       return Object.assign([], state.map(item => {
@@ -105,9 +72,6 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.SET_PRODUCTS: return setProducts(state, action);    
         case actionTypes.OPEN_DETAIL: return openDetail(state, action);    
         case actionTypes.FETCH_PRODUCTS_FAILED: return fetchProductsFailed(state, action);
-        case actionTypes.ADD_TO_CART: return addToCart(state, action);
-        case actionTypes.REMOVE_FROM_CART: return removeToCart(state, action);
-        case actionTypes.REMOVE_WHOLE_ITEM: return removeWholeItem(state, action);
         case actionTypes.PURCHASE: return purchase(state, action);
         default: return state;
     }

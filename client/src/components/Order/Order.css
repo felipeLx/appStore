@@ -1,0 +1,41 @@
+.order {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 3px #ccc;
+    padding: 10px;
+    margin: 10px auto;
+    box-sizing: border-box;
+    align-items: center;
+    text-align: center;
+    align-content: space-between;
+}
+
+.resume {
+    display: block;
+    padding: 5px;
+    font-weight: 2rem;
+    align-content: space-around;
+}
+
+.tb-header {
+    display: flex;
+    align-content: space-between;
+    padding: 15px;
+    font-weight: 2rem;
+}
+
+.tb-body {
+    display: flex;
+    align-content: space-between;
+    font-weight: 1.5rem;
+    padding: 10px;
+    margin: 10px;
+    align-items: inherit;
+    flex-direction: column;
+}
+
+.tb-body :hover {
+    opacity: 0.8;
+}

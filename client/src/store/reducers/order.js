@@ -55,6 +55,43 @@ const fetchOrdersFail = ( state, action ) => {
     return updateObject( state, { loading: false } );
 };
 
+
+const addToCart = (state, action) => {
+    if(state.orders.length > 0) {
+        state.orders.map(item => {
+            if(item._id === action.id) {
+                item.products.qty += action.up;
+                item.products.total = item.products.qty * item.products.price;
+                }})
+    } else {
+        state.orders.push({ id: action.id, products: {qty: action.up}});
+    }
+    return updateObject(state, {});
+} 
+  
+const removeToCart = (state, action) => {
+    if(state.orders.length > 0) {
+        state.orders.map((item, index) => {
+            if(item._id === action.id && item.products.qty > 1) {
+                item.products.qty -= action.down;
+                item.products.total = item.products.qty * item.products.price;
+            } else {
+                item.products.qty = 1;
+                item.products.total = item.products.qty * item.products.price;
+            }
+        })
+    } 
+    return updateObject(state, {});
+};
+
+
+const removeWholeItem = (state, action) => {
+    let newOrders = state.orders.filter(ord => ord._id !== action.id);
+    
+    return updateObject( state, 
+        {orders: newOrders});
+};
+
 const reducer = ( state = initialState, action ) => {
     switch ( action.type ) {
         case actionTypes.PURCHASE_INIT: return purchaseInit( state, action );
@@ -65,7 +102,9 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.FETCH_ORDERS_SUCCESS: return fetchOrdersSuccess( state, action );
         case actionTypes.FETCH_ORDERS_FAIL: return fetchOrdersFail( state, action );
         case actionTypes.ADD_ITEM: return addItemToOrder( state, action );
-        
+        case actionTypes.ADD_TO_CART: return addToCart(state, action);
+        case actionTypes.REMOVE_FROM_CART: return removeToCart(state, action);
+        case actionTypes.REMOVE_WHOLE_ITEM: return removeWholeItem(state, action);
         default: return state;
     }
 };
