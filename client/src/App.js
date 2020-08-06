@@ -12,6 +12,10 @@ const AdminDashboard = React.lazy(() => {
   return import('./containers/Dashboard/AdminDashboard');
 });
 
+const Checkout = React.lazy(() => {
+  return import('./containers/Checkout/Checkout');
+});
+
 const Orders = React.lazy(() => {
   return import('./containers/Orders/Orders');
 });
@@ -71,6 +75,7 @@ const app = React.memo(props => {
     routes = ( 
       <Switch>
           <Route path='/api/:id' component={ProductDetail} />
+          <Route path="/orders/checkout/:id" render={props => <Checkout {...props} />} />
           <Route path="/dashboard" render={props => <UserDashboard {...props} />} />
           <Route path="/dashboard/user" render={props => <UserController {...props} />} />
           <Route path="/dashboard/orders" render={props => <OrderController {...props} />} />

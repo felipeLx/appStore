@@ -1,8 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const session = require("express-session");
 const passport = require("passport");
-// const passportLocalMongoose = require("passport-local-mongoose");
 const findOrCreate = require("mongoose-findorcreate");
 const bodyParser = require('body-parser');
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
@@ -21,11 +19,13 @@ const userSchema = new mongoose.Schema({
     dateCreate: {type: Date, default: new Date().getTime(), require: true},
   });
 
-// userSchema.plugin(passportLocalMongoose);
+
 userSchema.plugin(findOrCreate);
+// taking off the warnings
+mongoose.set('useFindAndModify', false);
 mongoose.set("useCreateIndex", true);
-
-
+mongoose.set('useUnifiedTopology', true);
+mongoose.set('useNewUrlParser', true);
 
 const User = new mongoose.model("User", userSchema);
 

@@ -19,7 +19,11 @@ const productSchema = new mongoose.Schema({
   });
 
 productSchema.plugin(findOrCreate);
+// taking off the warnings
+mongoose.set('useFindAndModify', false);
 mongoose.set("useCreateIndex", true);
+mongoose.set('useUnifiedTopology', true);
+mongoose.set('useNewUrlParser', true);
 
 const Product = new mongoose.model("Product", productSchema);
   

@@ -14,8 +14,8 @@ require('dotenv').config();
  * DB_STRING_PROD=<your production database string>
  */ 
 
-const devConnection = process.env.MONGODB_URI;
-const prodConnection = process.env.MONGODB_URI;
+const devConnection = 'mongodb+srv://felipealisboa:Universidade.2010@cluster0-fqbok.mongodb.net/storeDB';
+const prodConnection = 'mongodb+srv://felipealisboa:Universidade.2010@cluster0-fqbok.mongodb.net/storeDB';
 
 // Connect to the correct environment database
 if (process.env.NODE_ENV === 'production') {

@@ -46,6 +46,34 @@ export const purchaseInit = () => {
     };
 };
 
+export const editOrderStart = () => {
+    return {
+        type: actionTypes.EDIT_OR_CONFIRM_ORDER_START
+    };
+};
+
+export const confirmOrEditOrder = (userId, orderData) => {
+    return {
+        type: actionTypes.EDIT_OR_CONFIRM_ORDERS,
+        userId,
+        orderData,
+    };
+};
+
+export const editOrdersFail = ( error ) => {
+    return {
+        type: actionTypes.EDIT_OR_CONFIRM_ORDER_FAIL,
+        error: error
+    };
+};
+
+export const editOrdersSuccess = ( orders ) => {
+    return {
+        type: actionTypes.EDIT_OR_CONFIRM_ORDER_SUCCESS,
+        orders,
+    };
+};
+
 export const fetchOrdersSuccess = ( orders ) => {
     return {
         type: actionTypes.FETCH_ORDERS_SUCCESS,
@@ -89,9 +117,11 @@ export const addToCart = (id, val) => {
      }
  };
 
- export const removeWholeItem = id => {
+ export const removeWholeItem = (id, qty, productId) => {
     return{
         type: actionTypes.REMOVE_WHOLE_ITEM,
         id,
+        qty,
+        productId,
     }
 };

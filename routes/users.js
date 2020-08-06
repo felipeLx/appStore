@@ -80,7 +80,6 @@ router.post('/signup', async(req, res, next) => {
 
 // GET user pela ID    
 router.get('/:id', passport.authenticate('jwt', {session: false}), (req,res, next) => {
-    console.log(req.params);
     try {
         const user = User.findById(req.params.id, (err, user) => {
         if(err) {

@@ -30,6 +30,7 @@ app.use(cors());
 
 // build folder
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static('client/build')); 
   
 //Routes
 app.use('/api', require('./routes/products'));

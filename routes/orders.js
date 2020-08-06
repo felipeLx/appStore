@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const utils = require('../lib/utils');
 
 const Order = require('../models/order.model');
 const Product = require('../models/product.model');
@@ -20,17 +19,18 @@ router.get("/", passport.authenticate('jwt', {session: false}), (req,res, next) 
 });
 
 router.post("/", passport.authenticate('jwt', {session: false}), (req,res, next) => {
-    const {_id, rating, isertTime, name, brand, quantity, price, picture, description, category} = req.body.product[0];
+    const {_id, rating, insertTime, name, brand, quantity, price, picture, description, category} = req.body.product[0];
     const { userId, qty, total } = req.body;
+
     try{
         let order = new Order({
-            total,
             userId,
             products: {
                 _id,
                 name,
                 price,
                 qty,
+                total,
             }
         });
         order.save();  
@@ -58,50 +58,68 @@ router.get("/:id", passport.authenticate('jwt', {session: false}), (req,res, nex
     }
 });
 
+router.get("/checkout/:id", passport.authenticate('jwt', {session: false}), (req,res, next) => {
+
+    const id = req.params.id;
+    try{
+        Order.find({userId: id}, (err, order) => {
+        if(err) {
+            return next(err);
+        } else if(!order) {
+            return res.status(500).send('order não encontrado');
+        } else {
+            return res.status(200).json({success: true, order: order });
+        }
+    })} catch(err) {
+        return res.status(400).json(err);
+    }
+});
+
 router.put("/:id", passport.authenticate('jwt', {session: false}), (req,res, next) => {
-    const {userId, productId, quantity, price, name, total} = req.body;
+    const userId = req.params.id;
     
     try{
-        Order.findByIdAndUpdate(userId, {
-            total,
-            products: {
-                _id: productId,
-                quantity,
-                name,
-                price
-            }
-        }, (err, order) => {
-        if(err) {
-            return res.status(404).send(`Error: ${err}`);
-        } else if(!order) {
-            return res.status(404).send('order não encontrado')
-        } else {
-                order.save()
-                    .then(order => {
-                        res.json(order)
-                    })
-        }
+        req.body.forEach(orderUpdate => {
+            Product.findByIdAndUpdate(orderUpdate.products._id, {quantity: -orderUpdate.products.qty}, {new: true});
+            Order.findByIdAndUpdate(orderUpdate._id, {
+                userId: orderUpdate.userId,
+                modifiedOn: orderUpdate.modifiedOn,
+                products: {
+                    _id: orderUpdate.products._id,
+                    name: orderUpdate.products.name,
+                    price: orderUpdate.products.price,
+                    qty: orderUpdate.products.qty,
+                    total: orderUpdate.products.total
+                }
+            }, (err, order) => {
+                if(err) {
+                    return res.status(404).send(`Error: ${err}`);
+                } else if(!order) {
+                    return res.status(404).send('order não encontrado')
+                } else {
+                        order.save();
+                }});
+               
         });
-        Product.findByIdAndUpdate(productId, {quantity: -quantity}, {new: true})
     } catch(err) {
         next(err);
     } 
 });
 
 router.delete("/:id", passport.authenticate('jwt', {session: false}), (req,res, next) => {
-    const {userId, quantity, productId} = req.body;
+    const userId = req.params.id;
+
     try{
-        Order.findByIdAndRemove(userId, (err, order) => {
+        Order.findByIdAndRemove(req.body.id, (err, order) => {
         if(err) {
             return next(err);
         } else {
+            Product.findByIdAndUpdate(req.body.productId, {quantity: +req.body.qty}, {new: true});
             return res.status(200).send(`${order._id} : deleted sucessfully!'`);
         }
         });
-
-        Product.findByIdAndUpdate(productId, {quantity: +quantity}, {new: true});
     } catch(err) {
-        return res.json(err);
+        return res.status(400).json(err);
     }
 });
 

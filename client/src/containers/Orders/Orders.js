@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import Order from '../../components/Order/Order';
@@ -9,7 +9,7 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 
 const Orders = props => {
     const {userId} = props;
-
+    
     useEffect(() => {
         showOrderFromUser(userId);
     },[]);

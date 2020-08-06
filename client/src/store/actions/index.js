@@ -20,7 +20,11 @@ export {
     addItemToOrder,
     addToCart,
     removeToCart,
-    removeWholeItem
+    removeWholeItem,
+    editOrderStart,
+    editOrdersFail,
+    editOrdersSuccess,
+    confirmOrEditOrder
 } from './order';
 export {
     login,

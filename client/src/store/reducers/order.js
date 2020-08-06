@@ -55,6 +55,9 @@ const fetchOrdersFail = ( state, action ) => {
     return updateObject( state, { loading: false } );
 };
 
+const editOrdersSuccess = (state, action) => {
+    return updateObject(state, {orders: action.orders});
+};
 
 const addToCart = (state, action) => {
     if(state.orders.length > 0) {
@@ -84,7 +87,6 @@ const removeToCart = (state, action) => {
     return updateObject(state, {});
 };
 
-
 const removeWholeItem = (state, action) => {
     let newOrders = state.orders.filter(ord => ord._id !== action.id);
     
@@ -105,6 +107,7 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.ADD_TO_CART: return addToCart(state, action);
         case actionTypes.REMOVE_FROM_CART: return removeToCart(state, action);
         case actionTypes.REMOVE_WHOLE_ITEM: return removeWholeItem(state, action);
+        case actionTypes.EDIT_OR_CONFIRM_ORDER_SUCCESS: return editOrdersSuccess(state, action);
         default: return state;
     }
 };

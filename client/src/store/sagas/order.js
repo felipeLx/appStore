@@ -8,14 +8,14 @@ const api = axios.create({
     'Content-Type': 'application/json',
 });
 
+const token = localStorage.getItem('token');
+api.defaults.headers.common['Authorization'] = `${token}`;
+
 export function* purchaseProductSaga(action) {
     yield put( actions.purchaseProductStart() );
 
-    const token = localStorage.getItem('token');
-    const headers = {"Authorization" : `${token}`}
-
     try{
-        yield api.post( '/', action.orderData, {headers} );
+        yield api.post( '/', action.orderData );
         yield put(actions.addItemToOrder( action.orderData ));
         } catch(error)  {
                 yield put( actions.purchaseProductFail( error ) );
@@ -24,13 +24,33 @@ export function* purchaseProductSaga(action) {
 
 export function* fetchOrdersSaga(action) {
     yield put(actions.fetchOrdersStart());
-    const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
-    const headers = {"Authorization" : `${token}`};
         try{
-            const response = yield api.get(`/${userId}`, {headers} );
+            const response = yield api.get(`/${userId}` );
             yield put(actions.fetchOrdersSuccess(response.data.order));
         } catch(error) {
             yield put(actions.fetchOrdersFail(error));
           }
-    } 
+}
+
+export function* editOrConfirmOrderSaga(action) {
+    yield put( actions.editOrderStart() );
+
+    const userId = localStorage.getItem('userId');
+    try{
+        yield api.put( `/${userId}`, action.orderData );
+        yield put(actions.editOrdersSuccess( action.orderData ));
+        } catch(error)  {
+                yield put( actions.editOrdersFail( error ) );
+        } 
+}
+
+export function* deleteOrderSaga(action) {
+    const userId = localStorage.getItem('userId');
+    
+    try{
+        yield api.delete( `/${userId}`, {data: {id: action.id, qty: action.qty, productId: action.productId}} );       
+        } catch(error)  {
+                yield put( actions.editOrdersFail( error ) );
+        } 
+}

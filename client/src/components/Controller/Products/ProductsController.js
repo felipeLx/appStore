@@ -73,7 +73,6 @@ const productsController = React.memo(props => {
     useEffect(() => {
         api.getAllProducts()
             .then(products => {
-                console.log(products.data);
                 setProductsList(products.data);
             })
             .catch(err => console.log(err));
