@@ -1,5 +1,6 @@
 // product data
 export const ADD_PRODUCT = 'ADD_PRODUCT';
+export const ADD_PRODUCTS = 'ADD_PRODUCTS';
 export const REMOVE_PRODUCT = 'REMOVE_PRODUCT';
 export const SET_PRODUCTS = 'SET_PRODUCTS';
 export const OPEN_DETAIL = 'OPEN_DETAIL';

@@ -5,7 +5,7 @@ import authService from '../../api/authService';
 import * as actions from '../actions/index';
 
 const api = axios.create({
-        baseURL: '/users',
+        baseURL: 'https://loja-lisboa.herokuapp.com/users',
         'Content-Type': 'application/json',
     });
 

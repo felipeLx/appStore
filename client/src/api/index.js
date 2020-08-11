@@ -5,7 +5,7 @@ const token = localStorage.getItem('token');
 
 if(token){
     api = axios.create({
-        baseURL: '/',
+        baseURL: 'https://loja-lisboa.herokuapp.com/',
         'Content-Type': 'application/json',
         headers: {"Authorization" : `${token}`},
     });

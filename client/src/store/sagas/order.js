@@ -4,7 +4,7 @@ import * as actions from '../actions/index';
 
 
 const api = axios.create({
-    baseURL: '/orders',
+    baseURL: 'https://loja-lisboa.herokuapp.com/orders',
     'Content-Type': 'application/json',
 });
 
@@ -44,6 +44,20 @@ export function* editOrConfirmOrderSaga(action) {
                 yield put( actions.editOrdersFail( error ) );
         } 
 }
+
+// export function* editOrConfirmAddressSaga(action) {
+//     yield put( actions.editOrderStart() );
+//     console.log(action);
+//     let address = [...action.orderData.address];
+//     console.log(address);
+//     const userId = localStorage.getItem('userId');
+//     // try{
+//     //     yield api.put( `/${userId}`, action.orderData );
+//     //     yield put(actions.editOrdersSuccess( action.orderData ));
+//     //     } catch(error)  {
+//     //             yield put( actions.editOrdersFail( error ) );
+//     //     } 
+// }
 
 export function* deleteOrderSaga(action) {
     const userId = localStorage.getItem('userId');

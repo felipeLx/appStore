@@ -26,4 +26,5 @@ export function* watchOrder() {
     yield takeEvery(actionType.FETCH_ORDERS, fetchOrdersSaga);
     yield takeEvery(actionType.EDIT_OR_CONFIRM_ORDERS, editOrConfirmOrderSaga);
     yield takeEvery(actionType.REMOVE_WHOLE_ITEM, deleteOrderSaga);
+    // yield takeEvery(actionType.EDIT_OR_CONFIRM_ORDERS, editOrConfirmAddressSaga);
 }

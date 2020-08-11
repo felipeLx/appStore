@@ -60,6 +60,20 @@ export const confirmOrEditOrder = (userId, orderData) => {
     };
 };
 
+// export const confirmOrEditAddress = (orderId, addressForm) => {
+//     let addressData = [];
+//     for(let i in addressForm) {
+//         addressData.push({
+//             [i]: addressForm[i].value
+//         });
+//     }
+//     return {
+//         type: actionTypes.EDIT_OR_CONFIRM_ORDERS,
+//         orderId,
+//         address: {...addressData},
+//     };
+// };
+
 export const editOrdersFail = ( error ) => {
     return {
         type: actionTypes.EDIT_OR_CONFIRM_ORDER_FAIL,

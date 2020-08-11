@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import Aux from '../Aux/Aux';
-import classes from './Layout.module.css';
+import './Layout.css';
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
-// import theme from '../../components/ThemeContext/ThemeStyle';
-// import ThemeContext from '../../components/ThemeContext/ThemeContext';
+import Footer from '../../components/Bootstrap/Footer/Footer';
 
 const layout = React.memo(props => {
     const [showSideDrawer, setShowSideDrawer] = useState(false);
@@ -21,7 +20,6 @@ const layout = React.memo(props => {
 
         return (
             <Aux>
-                {/* <ThemeContext.Provider value={theme.themes.dark}> */}
                 <Toolbar
                     isAuth={props.isAuthenticated}
                     isAdmin={props.isAdmin} 
@@ -32,10 +30,14 @@ const layout = React.memo(props => {
                     isAdmin={props.isAdmin} 
                     open={showSideDrawer}
                     closed={sideDrawerClosedHandler} />
-                {/* </ThemeContext.Provider> */}
-                <main className={classes.Content}>
-                    {props.children}
+                <main className='content'>
+                    <div className='main-content'>
+                        {props.children}
+                    </div>
                 </main>
+                <footer>
+                    <Footer />
+                </footer>
             </Aux>
         )
 });

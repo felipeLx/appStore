@@ -14,6 +14,14 @@ export const addProduct = ( name ) => {
     };
 };
 
+export const addProducts = ( products ) => {
+    return {
+        type: actionTypes.ADD_PRODUCTS,
+        products,
+    };
+};
+
+
 export const removeProduct = ( name ) => {
     return {
         type: actionTypes.REMOVE_PRODUCT,

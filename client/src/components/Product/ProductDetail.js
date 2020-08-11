@@ -41,12 +41,14 @@ const productDetail = React.memo(props => {
     
     return (
         <Aux>
-        <hr />
-        <div className='container'>
-            <div className='row'>
-                {card}
-            </div>
-        </div>
+            <hr />
+            <section>
+                <div className='container'>
+                    <div className='row'>
+                        {card}
+                    </div>
+                </div>
+            </section>
         </Aux>
     );
 });

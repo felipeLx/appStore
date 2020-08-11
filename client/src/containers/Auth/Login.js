@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Input from '../../components/UI/Input/Input';
@@ -85,23 +85,20 @@ const login = React.memo(props => {
   }
 
   return (
-    <div className="container">
-    <div style={{ marginTop: "4rem", paddingTop: "70px" }} className="row">
-      <div className="col s8 offset-s2">
-        <Link to="/" className="btn-flat waves-effect">
-          <i className="material-icons left"> </i> Home
-        </Link>
-        <div className="col s12" style={{ paddingLeft: "11.250px" }}>
+    <div className='container'>
+    <div className='row' style={{padding: '20px'}}>
+      <div className='col s8 offset-s2'>
+        <div className='col s12' style={{ paddingLeft: '11.250px' }}>
           <h4>
             <b>Login</b>
           </h4>
-          <p className="grey-text text-darken-1">
-            Ainda não tem uma conta? <Link to="/users/signup">Registrar</Link>
+          <p className='grey-text text-darken-1'>
+            Ainda não tem uma conta? <Link to='/users/signup'>Registrar</Link>
           </p>
         </div>
-        <form action="POST" onSubmit={submitHandler}>
+        <form action='POST' onSubmit={submitHandler}>
           {form}
-          <Button type='submit' btnType="Success">ENVIAR</Button>
+          <Button type='submit' btnType='darking'>ENVIAR</Button>
         </form>
       </div>
     </div>

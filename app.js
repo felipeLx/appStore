@@ -29,13 +29,14 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors());
 
 // build folder
-app.use(express.static(path.join(__dirname, 'public')));
-// app.use(express.static('client/build')); 
+// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('client/build')); 
   
 //Routes
 app.use('/api', require('./routes/products'));
 app.use('/users', require('./routes/users'));
 app.use('/orders', require('./routes/orders'));
+app.use('/checkout', require('./routes/checkout'));
 app.use('/dashboard', require('./routes/dashboard'));
 app.use('/', require('./routes/index'));
 

@@ -1,27 +1,30 @@
 .order {
     display: flex;
-    flex-direction: row;
-    width: 80%;
-    border: 1px solid #eee;
-    box-shadow: 0 2px 3px #ccc;
-    padding: 10px;
-    margin: 10px auto;
-    box-sizing: border-box;
+    flex-flow: row;
+    width: auto;
+    padding: 0 10px 0 10px;
     align-items: center;
     text-align: center;
-    align-content: space-between;
 }
 
 .resume {
-    display: block;
-    padding: 5px;
+    display: flex;
+    flex-flow: row;
+    padding: 10px;
     font-weight: 2rem;
-    align-content: space-around;
+    text-align: center;
+    align-items: center;
+}
+
+.resume td{
+    padding: 10px;
+}
+
+.resume button{
+    padding: -10px;
 }
 
 .tb-header {
-    display: flex;
-    align-content: space-between;
     padding: 15px;
     font-weight: 2rem;
 }
@@ -38,4 +41,11 @@
 
 .tb-body :hover {
     opacity: 0.8;
+}
+
+.check-out {
+    border: solid 0.2px #eee;
+    box-shadow: black;
+    margin: 10px 0 10px 0;
+    background-color: rgb(6, 34, 95);
 }

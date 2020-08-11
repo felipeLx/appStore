@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import './Order.css';
 import Modal from '../UI/Modal/Modal';
 import OrderSummary from '../Product/OrderSummary/OrderSummary';
+// import Checkout from '../../containers/Checkout/Checkout';
 import * as actions from '../../store/actions/index';
+import ContactData from '../../containers/Checkout/ContactData/ContactData';
 
 const order = React.memo(props => {
     const [orders, setOrders] = useState([]);
     const [purchasing, setPurchasing] = useState(false);
+    const [purchasingConfirmed, setPurchasingConfirmed] = useState(false);
 
     useEffect(() => {
         setOrders(props.products);
@@ -61,49 +65,69 @@ const order = React.memo(props => {
     const checkoutHandler = event => {
         event.preventDefault();
         setPurchasing(true);
-    }
+    };
  
     let orderSummary = null;
 
     const purchaseCancelHandler = () => {
         setPurchasing(false);
-    }
+    };
 
     const purchaseContinueHandler = () => {
         let userId = localStorage.getItem('userId');
+        setPurchasingConfirmed(true);
         props.onConfirmOrder(userId, orders);
-        window.location.assign(`/orders/checkout/${userId}`);
-    }
- 
-    const productOutput = orders.map(prod => {
-        const products = [...orders];
+        setPurchasing(false);
+    };
+
+    const addressHandler = () => {
+        
+    };
+    
+    const productOutput = orders.map((prod, index) => {
+        let products = [...orders];
         orderSummary = <OrderSummary
-                products={products}
+                productsList={products}
                 purchaseCancelled={purchaseCancelHandler}
                 purchaseContinued={purchaseContinueHandler} />;
-        
-        return <div key={prod._id}>
-            <div className='col resume'>
-                <p><strong>Nome: </strong>{prod.products.name}</p>
-                <p><strong>Preço: </strong>{prod.products.price.toFixed(2)}</p>
-                <p><strong>Quantidade: </strong>{prod.products.qty}</p>
-                <button type='button' id={prod._id} className='btn btn-sm btn-info' onClick={lessQtyHandler} >-</button>
-                <button type='button' id={prod._id} className='btn btn-sm btn-warning' onClick={moreQtyHandler}>+</button>
-                <p><strong>Total: </strong>{prod.products.total.toFixed(2)}</p>
-                <hr row='2' />
-                <button type='button' id={prod._id} className='btn btn-md btn-danger' style={{borderRadius: '100%'}} onClick={removeFromOrderHandler}>X</button>
-            </div>
-            </div>
+            return (
+                <tbody key={index}>
+                    <tr className='col resume'>
+                        <td><strong>N. </strong>{index+1}</td>
+                        <td><strong>Nome: </strong>{prod.products.name}  </td>
+                        <td><strong>  Preço: </strong>{prod.products.price.toFixed(2)}  </td>
+                        <td><strong>  Quantidade: </strong>{prod.products.qty}  </td>
+                        <td style={{paddingRight: '0'}}><button type='button' id={prod._id} className='btn btn-sm btn-light' onClick={lessQtyHandler} >  - </button></td>
+                        <td style={{paddingLeft: '0'}}><button type='button' id={prod._id} className='btn btn-sm btn-dark' onClick={moreQtyHandler}> +  </button></td>
+                        <td><strong>  Total: </strong>{prod.products.total.toFixed(2)}  </td>
+                        <td><button type='button' id={prod._id} className='btn btn-sm btn-danger' style={{borderRadius: '40%'}} onClick={removeFromOrderHandler}>cancelar</button></td>
+                    </tr>
+                </tbody>
+            )
     });
 
     return (
-        <div className='row order'>
-                {productOutput}
-        <Modal show={purchasing} modalClosed={purchaseCancelHandler}>
-            {orderSummary}
-        </Modal>
-            <button type='button' onClick={checkoutHandler}>CHECK OUT</button>
+        
+        <div>
+            <section>
+                {!purchasingConfirmed ? <button type='button' className='btn btn-md btn-success check-out' onClick={checkoutHandler}>CONFIRMAR PEDIDO</button> :
+                <button type='button' className='btn btn-md btn-dark check-out' onClick={addressHandler}>CONFIRMAR ENDEREÇO</button>}
+                <div className='row order'>
+                    <table>
+                        {purchasingConfirmed ? null : productOutput}
+                    </table>
+                        <Modal show={purchasing} modalClosed={purchaseCancelHandler}>
+                            {orderSummary}
+                        </Modal> 
+                </div>
+            </section>
+            <div className='row'>
+                <section>
+                    {purchasingConfirmed && <ContactData orders={orders} />}
+                </section>
+            </div>
         </div>
+        
     );
 });
 

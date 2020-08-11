@@ -105,11 +105,8 @@ const signup = React.memo(props => {
 
   return (
     <div className="container">
-      <div style={{ marginTop: "4rem", paddingTop: "70px" }} className="row">
+      <div className="row" style={{padding: '20px'}}>
         <div className="col s8 offset-s2">
-          <Link to="/" className="btn-flat waves-effect">
-            <i className="material-icons left"> </i> Home
-          </Link>
           <div className="col s12" style={{ paddingLeft: "11.250px" }}>
             <h4>
               <b>Registrar</b>
@@ -120,7 +117,7 @@ const signup = React.memo(props => {
           </div>
               <form action="POST" onSubmit={submitHandler}>
                 {form}
-                <Button type='submit' btnType="Success">ENVIAR</Button>
+                <Button type='submit' btnType="darking">ENVIAR</Button>
               </form>
         </div>
       </div>

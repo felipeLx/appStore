@@ -16,7 +16,7 @@ const input = ( props ) => {
                 {...props.elementConfig}
                 value={props.value}
                 onChange={props.changed}
-                type='text' />;
+             />;
             break;
         case ( 'number' ):
             inputElement = <input
@@ -24,7 +24,7 @@ const input = ( props ) => {
                 {...props.elementConfig}
                 value={props.value}
                 onChange={props.changed}
-                type='number' />;
+              />;
             break;
         case ( 'textarea' ):
             inputElement = <textarea
@@ -32,7 +32,7 @@ const input = ( props ) => {
                 {...props.elementConfig}
                 value={props.value}
                 onChange={props.changed}
-                type='text' />;
+              />;
             break;
         case ( 'select' ):
             inputElement = (
@@ -54,7 +54,7 @@ const input = ( props ) => {
                 {...props.elementConfig}
                 value={props.value}
                 onChange={props.changed}
-                type='text' />;
+                 />;
     }
 
     return (

@@ -58,23 +58,6 @@ router.get("/:id", passport.authenticate('jwt', {session: false}), (req,res, nex
     }
 });
 
-router.get("/checkout/:id", passport.authenticate('jwt', {session: false}), (req,res, next) => {
-
-    const id = req.params.id;
-    try{
-        Order.find({userId: id}, (err, order) => {
-        if(err) {
-            return next(err);
-        } else if(!order) {
-            return res.status(500).send('order não encontrado');
-        } else {
-            return res.status(200).json({success: true, order: order });
-        }
-    })} catch(err) {
-        return res.status(400).json(err);
-    }
-});
-
 router.put("/:id", passport.authenticate('jwt', {session: false}), (req,res, next) => {
     const userId = req.params.id;
     

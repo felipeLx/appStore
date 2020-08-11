@@ -4,146 +4,108 @@ import { connect } from 'react-redux';
 import { updateObject, checkValidity } from '../../../shared/utility';
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
-import classes from './ContactData.module.css';
+import './ContactData.css';
 import axios from 'axios';
 import Input from '../../../components/UI/Input/Input';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler'
 import * as actions from '../../../store/actions/index';
 
 const ContactData = props => {
-    const [orderForm, setOrderForm] = useState = {
-        form: 
-            {name: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'text',
-                    placeholder: 'Nome Completo'
-                },
-                value: '',
-                validation: {
-                    required: true
-                },
-                valid: false,
-                touched: false
+    const [orderForm, setOrderForm] = useState({
+        name: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'text',
+                placeholder: 'Nome Completo'
             },
-            street: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'text',
-                    placeholder: 'Endereço (rua, av, etc.)'
-                },
-                value: '',
-                validation: {
-                    required: true
-                },
-                valid: false,
-                touched: false
+            value: '',
+            validation: {
+                required: false
             },
-            complement: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'text',
-                    placeholder: 'Complemento'
-                },
-                value: '',
-                validation: {
-                    required: false
-                },
-                valid: false,
-                touched: false
-            },
-            neighborhood: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'text',
-                    placeholder: 'Bairro'
-                },
-                value: '',
-                validation: {
-                    required: false
-                },
-                valid: false,
-                touched: false
-            },
-            city: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'text',
-                    placeholder: 'Cidade e Estado'
-                },
-                value: '',
-                validation: {
-                    required: true
-                },
-                valid: false,
-                touched: false
-            },
-            zipCode: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'text',
-                    placeholder: 'Código Postal'
-                },
-                value: '',
-                validation: {
-                    required: true,
-                    minLength: 5,
-                    maxLength: 5,
-                    isNumeric: true
-                },
-                valid: false,
-                touched: false
-            },
-            country: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'text',
-                    placeholder: 'Country'
-                },
-                value: '',
-                validation: {
-                    required: true
-                },
-                valid: false,
-                touched: false
-            },
-            deliveryMethod: {
-                elementType: 'select',
-                elementConfig: {
-                    options: [
-                        {value: 'fastest', displayValue: '+ Rápido'},
-                        {value: 'cheapest', displayValue: '+ Barato'}
-                    ]
-                },
-                value: 'fastest',
-                validation: {},
-                valid: true
-            }
+            valid: true,
+            touched: false
         },
-        formIsValid: false
-    };
+        street: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'text',
+                placeholder: 'Endereço (rua, av, etc.)'
+            },
+            value: '',
+            validation: {
+                required: false
+            },
+            valid: true,
+            touched: false
+        },
+        complement: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'text',
+                placeholder: 'Complemento'
+            },
+            value: '',
+            valid: true,
+            touched: false
+        },
+        neighborhood: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'text',
+                placeholder: 'Bairro'
+            },
+            value: '',
+            validation: {
+                required: false
+            },
+            valid: true,
+            touched: false
+        },
+        city: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'text',
+                placeholder: 'Cidade e Estado'
+            },
+            value: '',
+            validation: {
+                required: false
+            },
+            valid: true,
+            touched: false
+        },
+        zipCode: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'text',
+                placeholder: 'Código Postal'
+            },
+            value: '',
+            validation: {
+                required: false,
+                minLength: 5,
+            },
+            valid: false,
+            touched: false
+        },
+        country: {
+            elementType: 'input',
+            elementConfig: {
+                type: 'text',
+                placeholder: 'Country'
+            },
+            value: '',
+            validation: {
+                required: false
+            },
+            valid: true,
+            touched: false
+        },
+    });
 
-    const orderHandler = ( event ) => {
-        event.preventDefault();
-  
-        const formData = {};
-        for (let formElementIdentifier in orderForm) {
-            formData[formElementIdentifier] = orderForm[formElementIdentifier].value;
-        }
-        const order = {
-            products: props.products,
-            total: props.total,
-            orderData: formData,
-            userId: props.userId
-        }
+    const [formIsValid, setFormIsValid] = useState(true);
 
-        props.onOrderProduct(order, props.token);
-        
-    }
-
-    
     const inputChangedHandler = (event, inputIdentifier) => {
-        
         const updatedFormElement = updateObject(orderForm[inputIdentifier], {
             value: event.target.value,
             valid: checkValidity(event.target.value, orderForm[inputIdentifier].validation),
@@ -157,9 +119,15 @@ const ContactData = props => {
         for (let inputIdentifier in updatedOrderForm) {
             formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
         }
-        setOrderForm({form: updatedOrderForm, formIsValid: formIsValid});
-    }
+        setOrderForm(updatedOrderForm);
+        setFormIsValid(formIsValid);
+    };
 
+    const confirmAndUpdateHandler = event => {
+        event.preventDefault();
+        alert('Obrigado pela sua compra! Verifique o email com os detalhes e para qualquer problema contacte nosso call-center com o número dos pedidos.');
+        window.location.assign('/');
+    };
 
     const formElementsArray = [];
     for (let key in orderForm) {
@@ -169,7 +137,7 @@ const ContactData = props => {
         });
     }
     let form = (
-        <form onSubmit={orderHandler}>
+        <form onSubmit={confirmAndUpdateHandler}>
             {formElementsArray.map(formElement => (
                 <Input 
                     key={formElement.id}
@@ -181,15 +149,15 @@ const ContactData = props => {
                     touched={formElement.config.touched}
                     changed={(event) => inputChangedHandler(event, formElement.id)} />
             ))}
-            <Button btnType="Success" disabled={!orderForm.formIsValid}>ORDER</Button>
+            <Button type='submit' btnType="success">CONFIRMAR</Button>
         </form>
     );
     if ( props.loading ) {
         form = <Spinner />;
     }
     return (
-        <div className={classes.ContactData}>
-            <h4>Enter your Contact Data</h4>
+        <div className='contactData'>
+            <h4>Confirmar o endereço para envio</h4>
             {form}
         </div>
     );
@@ -197,18 +165,11 @@ const ContactData = props => {
 
 const mapStateToProps = state => {
     return {
-        products: state.product.products,
-        total: state.product.products.total,
+        orders: state.order.orders,
         loading: state.order.loading,
         token: state.auth.token,
         userId: state.auth.userId
     }
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        onOrderProduct: (orderData,token) => dispatch(actions.purchaseProduct(orderData, token))
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axios));
+export default connect(mapStateToProps)(withErrorHandler(ContactData, axios));

@@ -1,5 +1,6 @@
 export {
     addProduct,
+    addProducts,
     removeProduct,
     initProducts,
     setProducts,
@@ -24,7 +25,8 @@ export {
     editOrderStart,
     editOrdersFail,
     editOrdersSuccess,
-    confirmOrEditOrder
+    confirmOrEditOrder,
+    // confirmOrEditAddress
 } from './order';
 export {
     login,

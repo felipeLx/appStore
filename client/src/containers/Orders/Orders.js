@@ -5,7 +5,6 @@ import Order from '../../components/Order/Order';
 import axios from 'axios';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../store/actions/index';
-import Spinner from '../../components/UI/Spinner/Spinner';
 
 const Orders = props => {
     const {userId} = props;
@@ -22,14 +21,15 @@ const Orders = props => {
         }
     };
 
-        let orders = <Spinner />;
+        let orders = <h5>Ainda não há produtos no carrinho!</h5>;
         if ( props.orders.length > 0 ) {
             const productsArray = [...props.orders];
             orders = <Order
+                        keys={productsArray.keys}
                         products={productsArray}/>
         }
         return (
-            <div className='container'>
+            <div className='container' style={{paddingTop: '20px'}}>
                 {orders}
                 
             </div>

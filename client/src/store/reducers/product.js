@@ -65,6 +65,10 @@ const purchase = (state, action) => {
       }))
 };
 
+const addProducts = (state, action) => {
+    return updateObject(state, {products: action.products})
+};
+
 const reducer = ( state = initialState, action ) => {
     switch ( action.type ) {
         case actionTypes.ADD_PRODUCT: return addProduct( state, action );
@@ -73,6 +77,7 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.OPEN_DETAIL: return openDetail(state, action);    
         case actionTypes.FETCH_PRODUCTS_FAILED: return fetchProductsFailed(state, action);
         case actionTypes.PURCHASE: return purchase(state, action);
+        case actionTypes.ADD_PRODUCTS: return addProducts(state, action);
         default: return state;
     }
 };
